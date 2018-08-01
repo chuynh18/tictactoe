@@ -28,5 +28,3 @@ To do
 
 * DRY up "AI" code
 * Game reset functionality (Probably will be lazy and just add a button that refreshes the page)
-* remove event handlers during AI turn
-    * this would allow delaying how quickly the AI makes its turn during player vs computer modes, as currently the AI moves immediately after the human player

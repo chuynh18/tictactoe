@@ -42,7 +42,7 @@ const modifyEventHandlers = function(input) {
     }
 }
 
-// updates game display
+// updates game display (background color, whose turn it is, who won or game tied, and the state of the board itself)
 const refreshDisplay = function() {
     if (winner === 1) {
         document.getElementById("turn").textContent = "Player 1 wins";
