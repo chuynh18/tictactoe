@@ -42,6 +42,10 @@ const modifyEventHandlers = function(input) {
     }
 }
 
+const showBoard = function() {
+    document.getElementById("board").classList.remove("hidden");
+}
+
 // makes it so that playable cells get highlighted on mouseover, but only during the human player's turn
 const highlight = function(bool, event) {
     const i = Math.floor(Number(event.target.id) / 3);

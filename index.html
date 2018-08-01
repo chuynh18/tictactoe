@@ -13,13 +13,13 @@
         <div id="turn">
             Play as...
             <div id="start-buttons">
-                <button onclick="mode=1;refreshDisplay();modifyEventHandlers('getCellCoords(event)');">Human vs Human</button> 
-                <button onclick="mode=2;refreshDisplay();modifyEventHandlers('getCellCoords(event)');">Human vs CPU</button> 
-                <button onclick="mode=3;modifyEventHandlers('getCellCoords(event)');refreshDisplay();setTimeout(play,1000)">CPU vs Human</button> 
-                <button onclick="mode=4;modifyEventHandlers('');refreshDisplay();setTimeout(play,1000)">Spectate CPU vs CPU</button> 
+                <button onclick="mode=1;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)');">Human vs Human</button> 
+                <button onclick="mode=2;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)');">Human vs CPU</button> 
+                <button onclick="mode=3;showBoard();modifyEventHandlers('getCellCoords(event)');refreshDisplay();setTimeout(play,1000)">CPU vs Human</button> 
+                <button onclick="mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,1000)">Spectate CPU vs CPU</button> 
             </div>
         </div>
-        <div class="grid-container" id="board">
+        <div class="grid-container hidden" id="board">
             <div class="grid-item" id="0" onclick="" onmouseenter="highlight(true, event)" onmouseleave="highlight(false, event)"></div>
             <div class="grid-item" id="1" onclick="" onmouseenter="highlight(true, event)" onmouseleave="highlight(false, event)"></div>
             <div class="grid-item" id="2" onclick="" onmouseenter="highlight(true, event)" onmouseleave="highlight(false, event)"></div>  
