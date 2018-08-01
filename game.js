@@ -42,6 +42,20 @@ const modifyEventHandlers = function(input) {
     }
 }
 
+// makes it so that playable cells get highlighted on mouseover, but only during the human player's turn
+const highlight = function(bool, event) {
+    const i = Math.floor(Number(event.target.id) / 3);
+    const j = Number(event.target.id) % 3;
+
+    if (bool && !gameBoard[i][j] && mode && mode !== 4) {
+        if ((mode === 2 && turn === 1) || (mode === 3 && turn === 2)) {
+            event.target.classList.add("hover");
+        }
+    } else if (!bool) {
+        event.target.classList.remove("hover");
+    }
+}
+
 // updates game display (background color, whose turn it is, who won or game tied, and the state of the board itself)
 const refreshDisplay = function() {
     if (winner === 1) {
@@ -84,7 +98,7 @@ const refreshDisplay = function() {
         
     for (let i = 0; i < gameBoard.length; i++) {
         for (let j = 0; j < gameBoard[i].length; j++) {
-            const cellId = 3 * i + j;
+            const cellId = gameBoard.length * i + j;
 
             if (gameBoard[i][j] === 1) {
                 document.getElementById(cellId).textContent = "X";
@@ -144,7 +158,7 @@ const updateCell = function(cell) {
         } else if (mode === 4 && !winner) {
             setTimeout(function() {
                 play();
-            }, 750);
+            }, 1000);
         }
     }
 }
@@ -350,7 +364,7 @@ const play = function() {
 
     for (let i = 0; i < gameBoard.length; i++) {
         for (let j = 0; j < gameBoard[i].length; j++) {
-            const index = 3 * i + j;
+            const index = gameBoard.length * i + j;
             const cellAsObj = {"row": i, "column": j};
 
             if (gameBoard[i][j] === 0) {

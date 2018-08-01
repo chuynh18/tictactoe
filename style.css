@@ -29,12 +29,17 @@ button {
     /* background-color: #f32121; */
     padding: 10px;
 }
+
 .grid-item {
-    background-color: rgb(214, 214, 214);
-    border: 1px solid rgba(0, 0, 0, 0.8);
+    background-color: #d4d4d4;
+    border: 1px solid #000000;
     padding: 20px;
     font-size: 128px;
     height: 150px;
     width: 150px;
     line-height: 150px;
+}
+
+.hover {
+    background-color: #f2f2f2;
 }
