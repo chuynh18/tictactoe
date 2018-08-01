@@ -29,6 +29,21 @@ const record = {
     ties: 0
 };
 
+// why not save the record to localStorage?
+const ls = window.localStorage;
+
+const saveRecord = function() {
+    ls.setItem("record", JSON.stringify(record));
+}
+
+const loadRecord = function() {
+    const loadedRecord = JSON.parse(ls.getItem("record"));
+
+    if (loadedRecord) {
+        [record.p1, record.p2, record.ties] = [loadedRecord.p1, loadedRecord.p2, loadedRecord.ties];
+    }
+}
+
 // resets game state
 const reset = function() {
     gameBoard = [
@@ -158,6 +173,8 @@ const refreshDisplay = function() {
         buttons.appendChild(restartButton);
         
         document.getElementById("turn").appendChild(buttons);
+
+        saveRecord();
     }
     
     // applies X and O + associated background color to the game board according to the game state
@@ -225,7 +242,7 @@ const updateCell = function(cell) {
         } else if (mode === 4 && !winner) {
             setTimeout(function() {
                 play();
-            }, 1000);
+            }, 900);
         }
     }
 }
@@ -319,7 +336,7 @@ const checkTie = function() {
         }
     }
 
-    if (tie) {
+    if (tie && !winner) {
         winner = -1;
     }
 }
@@ -334,6 +351,9 @@ const twoOutOfThree = function(cellsArrayOfObj) {
         return 1;
     } else if (cellCheck(cellsArrayOfObj[0]) === 2 && cellCheck(cellsArrayOfObj[1]) === 2) {
         return 2;
+    // added in to prevent suboptimal play (no need to play a cell that won't benefit the player)
+    } else if ((cellCheck(cellsArrayOfObj[0]) === 1 && cellCheck(cellsArrayOfObj[1]) === 2) || (cellCheck(cellsArrayOfObj[0]) === 2 && cellCheck(cellsArrayOfObj[1]) === 1)) {
+        return -1;
     } else {
         return 0;
     }
@@ -418,7 +438,7 @@ const play = function() {
         {"score": 1, "valid": false, diagA: false, diagB: false},
         {"score": 2, "valid": false, diagA: true, diagB: false},
     ];
-    let maxScore = 0;
+    let maxScore = -Infinity;
     let maxIndex = 0;
     const equivalentPlays = [];
     const cellToPlay = {
@@ -440,18 +460,24 @@ const play = function() {
                 let diagB;
 
                 // bump cell score by 2 if playing that cell would block the row or match 3 in the row
-                if (twoOutOfThree(row) !== 0) {
+                if (twoOutOfThree(row) === -1) {
+                    score[index].score -= 1;
+                } else if (twoOutOfThree(row) !== 0) {
                     score[index].score += 2;
                 }
                 // same as above, but for column
-                if (twoOutOfThree(col) !== 0) {
+                if (twoOutOfThree(col) === -1) {
+                    score[index].score -= 1;
+                } else if (twoOutOfThree(col) !== 0) {
                     score[index].score += 2;
                 }
                 // if diagonal is applicable for the cell, perform the same logic as above
                 if (score[index].diagA) {
                     diagA = cellsInDiagA(cellAsObj);
 
-                    if (twoOutOfThree(diagA) !== 0) {
+                    if (twoOutOfThree(diagA) === -1) {
+                        score[index].score -= 1;
+                    } else if (twoOutOfThree(diagA) !== 0) {
                         score[index].score += 2;
                     }
                 }
@@ -459,7 +485,9 @@ const play = function() {
                 if (score[index].diagB) {
                     diagB = cellsInDiagB(cellAsObj);
 
-                    if (twoOutOfThree(diagB) !== 0) {
+                    if (twoOutOfThree(diagB) === -1) {
+                        score[index].score -= 1;
+                    } else if (twoOutOfThree(diagB) !== 0) {
                         score[index].score += 2;
                     }
                 }
@@ -511,4 +539,7 @@ const play = function() {
     cellToPlay.column = maxIndex % 3;
 
     updateCell(cellToPlay);
-}
+} // end of "AI" code
+
+// on page load, load from localStorage
+loadRecord();
