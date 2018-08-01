@@ -144,7 +144,7 @@ const updateCell = function(cell) {
         } else if (mode === 4 && !winner) {
             setTimeout(function() {
                 play();
-            }, 0);
+            }, 750);
         }
     }
 }

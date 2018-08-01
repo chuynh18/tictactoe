@@ -20,6 +20,9 @@ My basic approach was:
 1. Make it so that clicking cells updates the game state
 1. Write logic for checking for win or draw
 1. Script game "AI"
+1. Modify AI script to make it more interesting
+    * Make it so whenever the AI sees more than one equivalently scored move, it will choose among the moves randomly
+    * Make it so if the AI gets to move first, it does not always play the center spot
 
 Basically, I took a fairly logical and incremental approach to building out this code.
 
@@ -27,4 +30,3 @@ To do
 -----
 
 * DRY up "AI" code
-* Game reset functionality (Probably will be lazy and just add a button that refreshes the page)
