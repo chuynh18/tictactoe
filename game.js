@@ -3,7 +3,7 @@
 // 0 = empty
 // 1 = player 1, plays as X
 // 2 = player 2, plays as O
-const gameBoard = [
+let gameBoard = [
     [0,0,0],
     [0,0,0],
     [0,0,0]
@@ -12,7 +12,7 @@ const gameBoard = [
 // tracks whose turn it is
 let turn = 1;
 
-// tracks number of turns elapsed
+// tracks number of turns elapsed.  Only useful for AI workaround due to deprioritizing the center of the board.
 let turns = 0;
 
 // tracks winner.  0 = game in progress, 1 = p1 win, 2 = p2 win, -1 = tied game
@@ -21,6 +21,56 @@ let winner = 0;
 // tracks human vs human, human vs cpu, cpu vs human, or cpu vs cpu
 // 0 = not started, 1 = PvP, 2 = PvC, 3 = CvP, 4 = CvC
 let mode = 0;
+
+// tracks wins and draws
+const record = {
+    p1: 0,
+    p2: 0,
+    ties: 0
+};
+
+// resets game state
+const reset = function() {
+    gameBoard = [
+        [0,0,0],
+        [0,0,0],
+        [0,0,0]
+    ];
+    turn = 1;
+    turns = 0;
+    winner = 0;
+    mode = 0;
+
+    refreshDisplay();
+
+    modifyEventHandlers("");
+
+    const targetDiv = document.getElementById("turn");
+    targetDiv.textContent = "Play as...";
+    const buttonList = document.createElement("div");
+    buttonList.id = "start-buttons";
+    
+    const button1 = document.createElement("button");
+    const button2 = document.createElement("button");
+    const button3 = document.createElement("button");
+    const button4 = document.createElement("button");
+
+    button1.textContent = "Human vs Human";
+    button1.setAttribute("onclick", "mode=1;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)');");
+    button2.textContent = "Human vs CPU";
+    button2.setAttribute("onclick", "mode=2;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)')");
+    button3.textContent = "CPU vs Human";
+    button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('getCellCoords(event)');refreshDisplay();setTimeout(play,1000)");
+    button4.textContent = "Spectate CPU vs CPU";
+    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,1000)");
+
+    buttonList.appendChild(button1);
+    buttonList.appendChild(button2);
+    buttonList.appendChild(button3);
+    buttonList.appendChild(button4);
+
+    targetDiv.appendChild(buttonList);
+}
 
 // flips turn
 const changeTurn = function() {
@@ -47,6 +97,7 @@ const showBoard = function() {
 }
 
 // makes it so that playable cells get highlighted on mouseover, but only during the human player's turn
+// accomplishes this by adding the "hover" class to the appropriate cells
 const highlight = function(bool, event) {
     const i = Math.floor(Number(event.target.id) / 3);
     const j = Number(event.target.id) % 3;
@@ -64,14 +115,17 @@ const highlight = function(bool, event) {
 const refreshDisplay = function() {
     // appends game status text and changes the page and board colors
     if (winner === 1) {
+        record.p1++;
         document.getElementById("turn").textContent = "Player 1 wins";
         document.getElementsByTagName("html")[0].style.backgroundColor = "#778899";
         document.getElementById("board").style.backgroundColor = "#2196F3";
     } else if (winner === 2) {
+        record.p2++;
         document.getElementById("turn").textContent = "Player 2 wins";
         document.getElementsByTagName("html")[0].style.backgroundColor = "#aa8484";
         document.getElementById("board").style.backgroundColor = "#f32121";
     } else if (winner === -1) {
+        record.ties++;
         document.getElementById("turn").textContent = "Tied game";
         document.getElementsByTagName("html")[0].style.backgroundColor = "#c4fcc2";
         document.getElementById("board").style.backgroundColor = "#36fc2f";
@@ -88,14 +142,17 @@ const refreshDisplay = function() {
         }
     }
 
-    // appends "play again" button (which simply refreshes the page)
+    // updates win record display
+    document.getElementById("score").innerHTML = `Player 1 wins: ${record.p1}<br>Player 2 wins: ${record.p2}<br>Ties: ${record.ties}`;
+
+    // appends "play again" button
     if (winner) {
         const buttons = document.createElement("div");
         buttons.id = "start-buttons";
 
         const restartButton = document.createElement("button");
         restartButton.textContent = "Play again!";
-        restartButton.setAttribute("onclick", "location.reload();");
+        restartButton.setAttribute("onclick", "reset();");
         buttons.appendChild(restartButton);
         
         document.getElementById("turn").appendChild(buttons);
@@ -112,6 +169,9 @@ const refreshDisplay = function() {
             } else if (gameBoard[i][j] === 2) {
                 document.getElementById(cellId).textContent = "O";
                 document.getElementById(cellId).style.backgroundColor = "#aa8484";
+            } else {
+                document.getElementById(cellId).textContent = "";
+                document.getElementById(cellId).style.backgroundColor = "#d4d4d4";
             }
         }
     }

@@ -17,8 +17,12 @@ html {
     margin-bottom: 30px;
 }
 
-button {
+button, .score {
     font-size: 24pt;
+}
+
+.score {
+    margin-top: 10px;
 }
 
 .grid-container {
