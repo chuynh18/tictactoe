@@ -60,24 +60,24 @@ const highlight = function(bool, event) {
 const refreshDisplay = function() {
     if (winner === 1) {
         document.getElementById("turn").textContent = "Player 1 wins";
-        document.getElementsByTagName("body")[0].style.backgroundColor = "#778899";
+        document.getElementsByTagName("html")[0].style.backgroundColor = "#778899";
         document.getElementById("board").style.backgroundColor = "#2196F3";
     } else if (winner === 2) {
         document.getElementById("turn").textContent = "Player 2 wins";
-        document.getElementsByTagName("body")[0].style.backgroundColor = "#aa8484";
+        document.getElementsByTagName("html")[0].style.backgroundColor = "#aa8484";
         document.getElementById("board").style.backgroundColor = "#f32121";
     } else if (winner === -1) {
         document.getElementById("turn").textContent = "Tied game";
-        document.getElementsByTagName("body")[0].style.backgroundColor = "#c4fcc2";
+        document.getElementsByTagName("html")[0].style.backgroundColor = "#c4fcc2";
         document.getElementById("board").style.backgroundColor = "#36fc2f";
     } else if (!winner) {
         if (turn === 1) {
-            document.getElementsByTagName("body")[0].style.backgroundColor = "#778899";
+            document.getElementsByTagName("html")[0].style.backgroundColor = "#778899";
             document.getElementById("board").style.backgroundColor = "#2196F3";
             document.getElementById("turn").textContent = "Player 1's turn";
         }
         else {
-            document.getElementsByTagName("body")[0].style.backgroundColor = "#aa8484";
+            document.getElementsByTagName("html")[0].style.backgroundColor = "#aa8484";
             document.getElementById("board").style.backgroundColor = "#f32121";
             document.getElementById("turn").textContent = "Player 2's turn";
         }
