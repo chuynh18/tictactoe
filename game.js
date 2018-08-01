@@ -110,6 +110,13 @@ const updateCell = function(cell) {
 
 // check to see if there is a winner
 const checkWinner = function() {
+    const diagA = [];
+    const diagB = [];
+    let diagWin1A = true;
+    let diagWin1B = true;
+    let diagWin2A = true;
+    let diagWin2B = true;
+
     for (let i = 0; i < gameBoard.length; i++) {
         const row = [];
         const column = [];
@@ -147,13 +154,6 @@ const checkWinner = function() {
             winner = 2;
         }
     }
-
-    const diagA = [];
-    const diagB = [];
-    let diagWin1A = true;
-    let diagWin1B = true;
-    let diagWin2A = true;
-    let diagWin2B = true;
 
     for (let i = 0; i < gameBoard.length; i++) {
         diagA[diagA.length] = gameBoard[i][i];
@@ -207,9 +207,9 @@ const checkTie = function() {
     }
 }
 
-// ===================================================
-// === functions for playing vs the computer below ===
-// ===================================================
+// ===========================
+// === AI Tic Tac Toe code ===
+// ===========================
 
 const twoOutOfThree = function(cellsArrayOfObj) {
     if (cellCheck(cellsArrayOfObj[0]) === 1 && cellCheck(cellsArrayOfObj[1]) === 1) {
@@ -220,6 +220,8 @@ const twoOutOfThree = function(cellsArrayOfObj) {
         return 0;
     }
 }
+
+// cellsInRow, cellsInColumn, cellsInDiagA, cellsInDiagB:  so not DRY.  todo:  refactor
 
 const cellsInRow = function(input) {
     const cells = [
