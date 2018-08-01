@@ -45,6 +45,8 @@ const reset = function() {
 
     modifyEventHandlers("");
 
+    document.getElementById("board").classList.add("hidden");
+
     const targetDiv = document.getElementById("turn");
     targetDiv.textContent = "Play as...";
     const buttonList = document.createElement("div");
