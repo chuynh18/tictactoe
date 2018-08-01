@@ -68,6 +68,19 @@ const refreshDisplay = function() {
             document.getElementById("turn").textContent = "Player 2's turn";
         }
     }
+
+    // appends "play again" button (which simply refreshes the page)
+    if (winner) {
+        const buttons = document.createElement("div");
+        buttons.id = "start-buttons";
+
+        const restartButton = document.createElement("button");
+        restartButton.textContent = "Play again!";
+        restartButton.setAttribute("onclick", "location.reload();");
+        buttons.appendChild(restartButton);
+        
+        document.getElementById("turn").appendChild(buttons);
+    }
         
     for (let i = 0; i < gameBoard.length; i++) {
         for (let j = 0; j < gameBoard[i].length; j++) {
@@ -110,29 +123,28 @@ const updateCell = function(cell) {
         changeTurn();
         refreshDisplay();
 
-        if (mode === 2) {
+        if (mode === 2 && !winner) {
             if (turn === 1) {
                 modifyEventHandlers("getCellCoords(event)");
             } else if (turn === 2) {
                 modifyEventHandlers("");
                 setTimeout(function() {
                     play();
-                }, 1500);
+                }, 1000);
             }
-        } else if (mode === 3) {
-            play();
+        } else if (mode === 3 && !winner) {
             if (turn === 2) {
                 modifyEventHandlers("getCellCoords(event)");
             } else if (turn === 1) {
                 modifyEventHandlers("");
                 setTimeout(function() {
                     play();
-                }, 1500);
+                }, 1000);
             }
-        } else if (mode === 4) {
+        } else if (mode === 4 && !winner) {
             setTimeout(function() {
                 play();
-            }, 1000);
+            }, 0);
         }
     }
 }
@@ -376,8 +388,24 @@ const play = function() {
         }
     }
 
-    if (turns > 1) {
+    // increase diversity of AI moves by prioritizing the center later
+    if (turns > 0) {
         score[4].score = 420;
+    }
+
+    // prevent edge case loss by increasing score of non-diagonal moves
+    // necessary due to delayed center
+    if (gameBoard[0][0] === gameBoard[2][2] && gameBoard[0][0]) {
+        score[1].score += 2;
+        score[3].score += 2;
+        score[5].score += 2;
+        score[7].score += 2;
+    }
+    if (gameBoard[0][2] === gameBoard[2][0] && gameBoard[0][2]) {
+        score[1].score += 2;
+        score[3].score += 2;
+        score[5].score += 2;
+        score[7].score += 2;
     }
 
     for (let i = 0; i < score.length; i++) {
@@ -397,6 +425,9 @@ const play = function() {
 
     cellToPlay.row = Math.floor(maxIndex / 3);
     cellToPlay.column = maxIndex % 3;
+
+    console.log(turn, cellToPlay);
+    console.log(score);
 
     updateCell(cellToPlay);
 }

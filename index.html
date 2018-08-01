@@ -12,22 +12,22 @@
         <div id="turn">
             Play as...
             <div id="start-buttons">
-                <button onclick="mode=1;refreshDisplay()">2 player local</button> 
-                <button onclick="mode=2;refreshDisplay()">Player 1 vs CPU</button> 
-                <button onclick="mode=3;play();">Player 2 vs CPU</button> 
+                <button onclick="mode=1;refreshDisplay();modifyEventHandlers('getCellCoords(event)');">2 player local</button> 
+                <button onclick="mode=2;refreshDisplay();modifyEventHandlers('getCellCoords(event)');">Player 1 vs CPU</button> 
+                <button onclick="mode=3;play();modifyEventHandlers('getCellCoords(event)');">Player 2 vs CPU</button> 
                 <button onclick="mode=4;play();modifyEventHandlers('');">CPU vs CPU</button> 
             </div>
         </div>
         <div class="grid-container" id="board">
-            <div class="grid-item" id="0" onclick="getCellCoords(event)"></div>
-            <div class="grid-item" id="1" onclick="getCellCoords(event)"></div>
-            <div class="grid-item" id="2" onclick="getCellCoords(event)"></div>  
-            <div class="grid-item" id="3" onclick="getCellCoords(event)"></div>
-            <div class="grid-item" id="4" onclick="getCellCoords(event)"></div>
-            <div class="grid-item" id="5" onclick="getCellCoords(event)"></div>  
-            <div class="grid-item" id="6" onclick="getCellCoords(event)"></div>
-            <div class="grid-item" id="7" onclick="getCellCoords(event)"></div>
-            <div class="grid-item" id="8" onclick="getCellCoords(event)"></div>  
+            <div class="grid-item" id="0" onclick=""></div>
+            <div class="grid-item" id="1" onclick=""></div>
+            <div class="grid-item" id="2" onclick=""></div>  
+            <div class="grid-item" id="3" onclick=""></div>
+            <div class="grid-item" id="4" onclick=""></div>
+            <div class="grid-item" id="5" onclick=""></div>  
+            <div class="grid-item" id="6" onclick=""></div>
+            <div class="grid-item" id="7" onclick=""></div>
+            <div class="grid-item" id="8" onclick=""></div>  
         </div>
     </body>
 </html>
