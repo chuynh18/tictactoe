@@ -62,6 +62,7 @@ const highlight = function(bool, event) {
 
 // updates game display (background color, whose turn it is, who won or game tied, and the state of the board itself)
 const refreshDisplay = function() {
+    // appends game status text and changes the page and board colors
     if (winner === 1) {
         document.getElementById("turn").textContent = "Player 1 wins";
         document.getElementsByTagName("html")[0].style.backgroundColor = "#778899";
@@ -99,7 +100,8 @@ const refreshDisplay = function() {
         
         document.getElementById("turn").appendChild(buttons);
     }
-        
+    
+    // applies X and O + associated background color to the game board according to the game state
     for (let i = 0; i < gameBoard.length; i++) {
         for (let j = 0; j < gameBoard[i].length; j++) {
             const cellId = gameBoard.length * i + j;
@@ -120,15 +122,13 @@ const cellCheck = function(cell) {
     return gameBoard[cell.row][cell.column];
 }
 
-// gets the coordinates of the clicked cell, triggered by click
+// gets the coordinates of the clicked cell, triggered by click.  Triggers game logic by calling updateCell.
 const getCellCoords = function(event) {
     const cell = {
         "row": Math.floor(Number(event.target.id)/3),
         "column": Math.floor(Number(event.target.id)%3)
     };
 
-    console.log(`You clicked row: ${cell.row}, column: ${cell.column}`);
-    console.log(cellCheck(cell));
     updateCell(cell);
 }
 
@@ -141,6 +141,7 @@ const updateCell = function(cell) {
         changeTurn();
         refreshDisplay();
 
+        // causes "AI" to make its play
         if (mode === 2 && !winner) {
             if (turn === 1) {
                 modifyEventHandlers("getCellCoords(event)");
@@ -176,6 +177,7 @@ const checkWinner = function() {
     let diagWin2A = true;
     let diagWin2B = true;
 
+    // checks rows and columns
     for (let i = 0; i < gameBoard.length; i++) {
         const row = [];
         const column = [];
@@ -214,6 +216,7 @@ const checkWinner = function() {
         }
     }
 
+    // checks the two diagonals
     for (let i = 0; i < gameBoard.length; i++) {
         diagA[diagA.length] = gameBoard[i][i];
         diagB[diagB.length] = gameBoard[i][2-i];
@@ -240,12 +243,6 @@ const checkWinner = function() {
     } else if (diagWin2A || diagWin2B) {
         winner = 2;
     }
-
-    if (winner === 1) {
-        console.log("Player 1 wins");
-    } else if (winner === 2) {
-        console.log("Player 2 wins");
-    }
 }
 
 // check to see if the game ended in a tied state
@@ -261,7 +258,6 @@ const checkTie = function() {
     }
 
     if (tie) {
-        console.log("Tied game.");
         winner = -1;
     }
 }
@@ -270,6 +266,7 @@ const checkTie = function() {
 // === AI Tic Tac Toe code ===
 // ===========================
 
+// checks to see if a move would lead to winning or denying the other player a win
 const twoOutOfThree = function(cellsArrayOfObj) {
     if (cellCheck(cellsArrayOfObj[0]) === 1 && cellCheck(cellsArrayOfObj[1]) === 1) {
         return 1;
@@ -280,7 +277,7 @@ const twoOutOfThree = function(cellsArrayOfObj) {
     }
 }
 
-// cellsInRow, cellsInColumn, cellsInDiagA, cellsInDiagB:  so not DRY.  todo:  refactor
+// === cellsInRow, cellsInColumn, cellsInDiagA, cellsInDiagB:  so not DRY.  todo:  refactor ===
 
 const cellsInRow = function(input) {
     const cells = [
@@ -347,6 +344,7 @@ const cellsInDiagB = function(input) {
 }
 
 const play = function() {
+    // score array holds all possible moves the AI can make
     const score = [
         {"score": 2, "valid": false, diagA: true, diagB: false},
         {"score": 1, "valid": false, diagA: false, diagB: false},
@@ -366,25 +364,28 @@ const play = function() {
         "column": 0
     };
 
+    // iterate over the game board
     for (let i = 0; i < gameBoard.length; i++) {
         for (let j = 0; j < gameBoard[i].length; j++) {
             const index = gameBoard.length * i + j;
             const cellAsObj = {"row": i, "column": j};
 
+            // if the cell is unplayed, modify its score
             if (gameBoard[i][j] === 0) {
                 const row = cellsInRow(cellAsObj);
                 const col = cellsInColumn(cellAsObj);
                 let diagA;
                 let diagB;
 
+                // bump cell score by 2 if playing that cell would block the row or match 3 in the row
                 if (twoOutOfThree(row) !== 0) {
                     score[index].score += 2;
                 }
-
+                // same as above, but for column
                 if (twoOutOfThree(col) !== 0) {
                     score[index].score += 2;
                 }
-
+                // if diagonal is applicable for the cell, perform the same logic as above
                 if (score[index].diagA) {
                     diagA = cellsInDiagA(cellAsObj);
 
@@ -400,7 +401,7 @@ const play = function() {
                         score[index].score += 2;
                     }
                 }
-
+                // if the cell is playable, flag it as a valid play
                 score[index].valid = true;
             }
         }
@@ -412,7 +413,7 @@ const play = function() {
     }
 
     // prevent edge case loss by increasing score of non-diagonal moves
-    // necessary due to delayed center
+    // this became necessary when I made the AI deprioritize playing the center cell
     if (gameBoard[0][0] === gameBoard[2][2] && gameBoard[0][0]) {
         score[1].score += 2;
         score[3].score += 2;
@@ -426,26 +427,26 @@ const play = function() {
         score[7].score += 2;
     }
 
+    // loop through the list of possible plays and find the best play
     for (let i = 0; i < score.length; i++) {
         if (score[i].score > maxScore && score[i].valid) {
             maxScore = score[i].score;
             maxIndex = i;
             equivalentPlays.length = 0;
             equivalentPlays[equivalentPlays.length] = i;
+        // if there are plays that are tied for best possible play, store them in an array
         } else if (score[i].score === maxScore && score[i].valid) {
             equivalentPlays[equivalentPlays.length] = i;
         }
     }
 
+    // if there are multiple plays that are tied for best, randomly pick one of those plays
     if (equivalentPlays.length > 1) {
         maxIndex = equivalentPlays[Math.floor(Math.random() * equivalentPlays.length)];
     }
 
     cellToPlay.row = Math.floor(maxIndex / 3);
     cellToPlay.column = maxIndex % 3;
-
-    console.log(turn, cellToPlay);
-    console.log(score);
 
     updateCell(cellToPlay);
 }
