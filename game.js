@@ -33,6 +33,15 @@ const changeTurn = function() {
     turns++;
 }
 
+// Removes or attaches event handlers to each cell on the game board
+const modifyEventHandlers = function(input) {
+    const cells = document.getElementsByClassName("grid-item");
+
+    for (let i = 0; i < cells.length; i++) {
+        cells[i].setAttribute("onclick", input);
+    }
+}
+
 // updates game display
 const refreshDisplay = function() {
     if (winner === 1) {
@@ -101,14 +110,29 @@ const updateCell = function(cell) {
         changeTurn();
         refreshDisplay();
 
-        if (mode === 2  && turn === 2) {
+        if (mode === 2) {
+            if (turn === 1) {
+                modifyEventHandlers("getCellCoords(event)");
+            } else if (turn === 2) {
+                modifyEventHandlers("");
+                setTimeout(function() {
+                    play();
+                }, 1500);
+            }
+        } else if (mode === 3) {
             play();
-        } else if (mode === 3 && turn === 1) {
-            play();
+            if (turn === 2) {
+                modifyEventHandlers("getCellCoords(event)");
+            } else if (turn === 1) {
+                modifyEventHandlers("");
+                setTimeout(function() {
+                    play();
+                }, 1500);
+            }
         } else if (mode === 4) {
             setTimeout(function() {
                 play();
-            }, 200);
+            }, 1000);
         }
     }
 }
@@ -373,8 +397,6 @@ const play = function() {
 
     cellToPlay.row = Math.floor(maxIndex / 3);
     cellToPlay.column = maxIndex % 3;
-
-    console.log(turns);
 
     updateCell(cellToPlay);
 }
