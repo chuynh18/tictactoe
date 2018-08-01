@@ -30,3 +30,4 @@ To do
 -----
 
 * DRY up "AI" code
+* Make play again button reset game state rather than refreshing the page
