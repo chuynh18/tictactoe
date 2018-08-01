@@ -12,6 +12,9 @@ const gameBoard = [
 // tracks whose turn it is
 let turn = 1;
 
+// tracks number of turns elapsed
+let turns = 0;
+
 // tracks winner.  0 = game in progress, 1 = p1 win, 2 = p2 win, -1 = tied game
 let winner = 0;
 
@@ -26,6 +29,8 @@ const changeTurn = function() {
     } else {
         turn = 1;
     }
+
+    turns++;
 }
 
 // updates game display
@@ -103,7 +108,7 @@ const updateCell = function(cell) {
         } else if (mode === 4) {
             setTimeout(function() {
                 play();
-            }, 500);
+            }, 200);
         }
     }
 }
@@ -293,7 +298,7 @@ const play = function() {
         {"score": 1, "valid": false, diagA: false, diagB: false},
         {"score": 2, "valid": false, diagA: false, diagB: true},
         {"score": 1, "valid": false, diagA: false, diagB: false},
-        {"score": 3, "valid": false, diagA: true, diagB: true},
+        {"score": 2, "valid": false, diagA: true, diagB: true},
         {"score": 1, "valid": false, diagA: false, diagB: false},
         {"score": 2, "valid": false, diagA: false, diagB: true},
         {"score": 1, "valid": false, diagA: false, diagB: false},
@@ -347,6 +352,10 @@ const play = function() {
         }
     }
 
+    if (turns > 1) {
+        score[4].score = 420;
+    }
+
     for (let i = 0; i < score.length; i++) {
         if (score[i].score > maxScore && score[i].valid) {
             maxScore = score[i].score;
@@ -364,6 +373,8 @@ const play = function() {
 
     cellToPlay.row = Math.floor(maxIndex / 3);
     cellToPlay.column = maxIndex % 3;
+
+    console.log(turns);
 
     updateCell(cellToPlay);
 }
