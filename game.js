@@ -89,6 +89,22 @@ const reset = function() {
     targetDiv.appendChild(buttonList);
 }
 
+// makes it so that playable cells get highlighted on mouseover, but only during the human player's turn
+// accomplishes this by adding the "hover" class to the appropriate cells
+const highlight = function(bool, event) {
+    const i = Math.floor(Number(event.target.id) / 3);
+    const j = Number(event.target.id) % 3;
+
+    if (bool && !gameBoard[i][j] && mode !== 4) {
+        if ((mode === 2 && turn === 1) || (mode === 3 && turn === 2) || mode === 1) {
+            event.target.classList.add("hover");
+        }
+    } else if (!bool) {
+        console.log("mouseoff");
+        event.target.classList.remove("hover");
+    }
+}
+
 // plays scribble sound
 const playSound = function(sound) {
     const audio = new Audio(sound);
@@ -119,21 +135,6 @@ const modifyEventHandlers = function(input) {
 
 const showBoard = function() {
     document.getElementById("board").classList.remove("hidden");
-}
-
-// makes it so that playable cells get highlighted on mouseover, but only during the human player's turn
-// accomplishes this by adding the "hover" class to the appropriate cells
-const highlight = function(bool, event) {
-    const i = Math.floor(Number(event.target.id) / 3);
-    const j = Number(event.target.id) % 3;
-
-    if (bool && !gameBoard[i][j] && mode && mode !== 4) {
-        if ((mode === 2 && turn === 1) || (mode === 3 && turn === 2)) {
-            event.target.classList.add("hover");
-        }
-    } else if (!bool) {
-        event.target.classList.remove("hover");
-    }
 }
 
 // updates game display (background color, whose turn it is, who won or game tied, and the state of the board itself)
@@ -198,7 +199,6 @@ const refreshDisplay = function() {
                 document.getElementById(cellId).style.backgroundColor = "#aa8484";
             } else {
                 document.getElementById(cellId).textContent = "";
-                document.getElementById(cellId).style.backgroundColor = "#d4d4d4";
             }
         }
     }

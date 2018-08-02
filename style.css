@@ -5,6 +5,10 @@ html {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
+.hover {
+    background-color: #f2f2f2;
+}
+
 .heading {
     font-size: 52pt;
 }
@@ -43,10 +47,6 @@ button, .score {
     height: 150px;
     width: 150px;
     line-height: 150px;
-}
-
-.hover {
-    background-color: #f2f2f2;
 }
 
 .hidden {
@@ -135,4 +135,8 @@ button, .score {
         width: 80px;
         line-height: 80px;
     }
+}
+
+.hover {
+    background-color: #f2f2f2;
 }
