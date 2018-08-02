@@ -77,7 +77,7 @@ const reset = function() {
     button2.textContent = "Human vs CPU";
     button2.setAttribute("onclick", "mode=2;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)')");
     button3.textContent = "CPU vs Human";
-    button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('getCellCoords(event)');refreshDisplay();setTimeout(play,1000)");
+    button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,1000)");
     button4.textContent = "Spectate CPU vs CPU";
     button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,1000)");
 
@@ -95,12 +95,9 @@ const highlight = function(bool, event) {
     const i = Math.floor(Number(event.target.id) / 3);
     const j = Number(event.target.id) % 3;
 
-    if (bool && !gameBoard[i][j] && mode !== 4) {
-        if ((mode === 2 && turn === 1) || (mode === 3 && turn === 2) || mode === 1) {
-            event.target.classList.add("hover");
-        }
+    if (bool && !gameBoard[i][j] && ((mode === 2 && turn === 1) || (mode === 3 && turn === 2) || mode === 1)) {
+        event.target.classList.add("hover");
     } else if (!bool) {
-        console.log("mouseoff");
         event.target.classList.remove("hover");
     }
 }
@@ -139,6 +136,7 @@ const showBoard = function() {
 
 // updates game display (background color, whose turn it is, who won or game tied, and the state of the board itself)
 const refreshDisplay = function() {
+    
     // appends game status text and changes the page and board colors
     if (winner === 1) {
         record.p1++;
@@ -155,7 +153,7 @@ const refreshDisplay = function() {
         document.getElementById("turn").textContent = "Tied game";
         document.getElementsByTagName("html")[0].style.backgroundColor = "#c4fcc2";
         document.getElementById("board").style.backgroundColor = "#36fc2f";
-    } else if (!winner) {
+    } else if (!winner && mode) {
         if (turn === 1) {
             document.getElementsByTagName("html")[0].style.backgroundColor = "#778899";
             document.getElementById("board").style.backgroundColor = "#2196F3";
@@ -189,18 +187,18 @@ const refreshDisplay = function() {
     // applies X and O + associated background color to the game board according to the game state
     for (let i = 0; i < gameBoard.length; i++) {
         for (let j = 0; j < gameBoard[i].length; j++) {
-            const cellId = gameBoard.length * i + j;
+            const cellId = document.getElementById(gameBoard.length * i + j);
 
             if (gameBoard[i][j] === 1) {
-                document.getElementById(cellId).textContent = "X";
-                document.getElementById(cellId).classList.add("x");
+                cellId.textContent = "X";
+                cellId.classList.add("x");
             } else if (gameBoard[i][j] === 2) {
-                document.getElementById(cellId).textContent = "O";
-                document.getElementById(cellId).classList.add("o");
+                cellId.textContent = "O";
+                cellId.classList.add("o");
             } else {
-                document.getElementById(cellId).textContent = "";
-                document.getElementById(cellId).classList.remove("x");
-                document.getElementById(cellId).classList.remove("o");
+                cellId.textContent = "";
+                cellId.classList.remove("x");
+                cellId.classList.remove("o");
             }
         }
     }
@@ -551,5 +549,8 @@ const play = function() {
     updateCell(cellToPlay);
 } // end of "AI" code
 
-// on page load, load from localStorage
-loadRecord();
+// on page load, load from localStorage and render the page
+window.onload = function() {
+    loadRecord();
+    reset();
+}

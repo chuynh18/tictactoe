@@ -11,17 +11,8 @@
         <link rel="manifest" href="manifest.json">
     </head>
     <body>
-            <script src="game-min.js"></script>
         <div class="heading">Tic-tac-toe</div>
-        <div id="turn">
-            Play as...
-            <div id="start-buttons">
-                <button onclick="mode=1;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)');">Human vs Human</button> 
-                <button onclick="mode=2;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)');">Human vs CPU</button> 
-                <button onclick="mode=3;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,1000)">CPU vs Human</button> 
-                <button onclick="mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,900)">Spectate CPU vs CPU</button> 
-            </div>
-        </div>
+        <div id="turn"></div>
         <div class="grid-container hidden" id="board">
             <div class="grid-item" id="0" onmouseenter="highlight(true, event)" onmouseleave="highlight(false, event)"></div>
             <div class="grid-item" id="1" onmouseenter="highlight(true, event)" onmouseleave="highlight(false, event)"></div>
@@ -33,6 +24,7 @@
             <div class="grid-item" id="7" onmouseenter="highlight(true, event)" onmouseleave="highlight(false, event)"></div>
             <div class="grid-item" id="8" onmouseenter="highlight(true, event)" onmouseleave="highlight(false, event)"></div>  
         </div>
-        <div class="score" id="score"> </div>
+        <div class="score" id="score"></div>
+        <script src="game.js"></script>
     </body>
 </html>
