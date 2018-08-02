@@ -8,7 +8,7 @@ About
 
 This is just a small challenge I gave myself.  I was very confident I could get the game logic down.  On the other hand, I had some ideas of how to approach scripting the game such that the computer could play it, but I hadn't ever done anything like this before.  So, I'm glad I gave this a try and got something working, even if the code could use some cleanup (especially when it comes to DRYing up the code).
 
-I chose Tic-tac-toe because it's a very simple game:  it's deterministic, and there aren't many possible moves on a 3x3 board.  I knew going in that while the rules of the game are very simple, I would have to think about the game on a more mechanical level to script something that could play the game.
+I chose Tic-tac-toe because it's a very simple game:  it's deterministic, and there aren't many possible moves on a 3x3 board.  It also helps that the number of possible movies is strictly monotonic and decreasing.  I knew going in that while the rules of the game are very simple, I would have to think about the game on a more mechanical level to script something that could play the game.
 
 There's not much to say about the game itself; it's simply Tic-tac-toe.  Take turns marking spots on the 3x3 board; first player to mark three contiguous cells wins.
 
@@ -43,4 +43,4 @@ Other notes
 -----------
 
 * Pencil scribble audio credit:  rylandbrooks on [freesound.org](https://freesound.org/people/rylandbrooks/sounds/387926/)
-* I wanted to focus more on the game and AI logic, so CSS grid was... appropriated from [W3Schools](https://www.w3schools.com/css/css_grid.asp).  Thanks, W3Schools, for being a concise and digestible reference.
+* I wanted to focus more on the game and AI logic, so CSS grid was... appropriated from [W3Schools](https://www.w3schools.com/css/css_grid.asp).  Thanks, W3Schools, for being a concise and digestible reference for all things web.
