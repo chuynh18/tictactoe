@@ -45,16 +45,16 @@ button, .score {
     line-height: 150px;
 }
 
+.hover {
+    background-color: #f2f2f2;
+}
+
 .x {
     background-color: #778899;
 }
 
 .o {
     background-color: #aa8484;
-}
-
-.hover {
-    background-color: #f2f2f2;
 }
 
 .hidden {
