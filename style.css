@@ -17,12 +17,12 @@ html {
     margin-bottom: 30px;
 }
 
-button, .score {
+button, #score {
     font-size: 24pt;
     margin: 0 5px;
 }
 
-.score {
+#score {
     margin-top: 10px;
 }
 
@@ -105,7 +105,7 @@ button, .score {
         line-height: 125px;
     }
 
-    .score {
+    #score {
         font-size: 18pt;
     }
 }

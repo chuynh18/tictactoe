@@ -26,11 +26,12 @@ My basic approach to development (in chronological order):
 1. Modify AI script to make it more interesting
     * Make it so whenever the AI sees more than one equivalently scored move, it will choose among the moves randomly
     * Make it so if the AI gets to move first, it does not always play the center spot
-1. Cosmetic tweaks
+1. Cosmetic or other small tweaks
     * Added viewport tag and media queries for mobile responsiveness
     * Added mouseover effect to the game board (only during human turn and only for playable cells)
     * Hide the game board until the game is actually started
-    * Pencil scribble audio to further differentiate Xs and Os.
+    * Pencil scribble audio to further differentiate Xs and Os
+    * Save win/draw record to localStorage
 
 Basically, I took a fairly logical and incremental approach to building out this code.
 
