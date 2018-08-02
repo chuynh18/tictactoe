@@ -193,12 +193,14 @@ const refreshDisplay = function() {
 
             if (gameBoard[i][j] === 1) {
                 document.getElementById(cellId).textContent = "X";
-                document.getElementById(cellId).style.backgroundColor = "#778899";
+                document.getElementById(cellId).classList.add("x");
             } else if (gameBoard[i][j] === 2) {
                 document.getElementById(cellId).textContent = "O";
-                document.getElementById(cellId).style.backgroundColor = "#aa8484";
+                document.getElementById(cellId).classList.add("o");
             } else {
                 document.getElementById(cellId).textContent = "";
+                document.getElementById(cellId).classList.remove("x");
+                document.getElementById(cellId).classList.remove("o");
             }
         }
     }
