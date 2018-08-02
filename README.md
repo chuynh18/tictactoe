@@ -44,3 +44,4 @@ Other notes
 
 * Pencil scribble audio credit:  rylandbrooks on [freesound.org](https://freesound.org/people/rylandbrooks/sounds/387926/)
 * I wanted to focus more on the game and AI logic, so CSS grid was... appropriated from [W3Schools](https://www.w3schools.com/css/css_grid.asp).  Thanks, W3Schools, for being a concise and digestible reference for all things web.
+* Please see `game.js` for the source code.  The hosted version embeds `game-min.js`, which was minified via [Google's Closure Compiler](https://closure-compiler.appspot.com/home).  I did this to see if there were any blatant errors that would come up; it's nice to get 0 warnings and errors.
