@@ -89,11 +89,19 @@ const reset = function() {
     targetDiv.appendChild(buttonList);
 }
 
-// flips turn
+// plays scribble sound
+const playSound = function(sound) {
+    const audio = new Audio(sound);
+    audio.play();
+}
+
+// flips turn and plays sound
 const changeTurn = function() {
     if (turn === 1) {
+        playSound("x.webm");
         turn = 2;
     } else {
+        playSound("o.webm");
         turn = 1;
     }
 

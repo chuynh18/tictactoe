@@ -30,10 +30,17 @@ My basic approach to development (in chronological order):
     * Added viewport tag and media queries for mobile responsiveness
     * Added mouseover effect to the game board (only during human turn and only for playable cells)
     * Hide the game board until the game is actually started
+    * Pencil scribble audio to further differentiate Xs and Os.
 
 Basically, I took a fairly logical and incremental approach to building out this code.
 
 Potential Todo List
------
+-------------------
 
 * DRY up "AI" code
+
+Other notes
+-----------
+
+* Pencil scribble audio credit:  rylandbrooks on [freesound.org](https://freesound.org/people/rylandbrooks/sounds/387926/)
+* I wanted to focus more on the game and AI logic, so CSS grid was... appropriated from [W3Schools](https://www.w3schools.com/css/css_grid.asp).  Thanks, W3Schools, for being a concise and digestible reference.
