@@ -21,8 +21,8 @@ My basic approach to development (in chronological order):
     * From a number to coordinates:  `Row = Math.floor(cellId / 3)` and `Column = cellId % 3`
     * This logic can be generalized by replacing 3 with the dimension of the game board.
 1. Make it so that clicking cells updates the game state
-1. Write logic for checking for win or draw
-1. Script game "AI" and integrate it into the existing game code
+1. Write logic for checking for win or draw.  At this point, the game is playable by two players.
+1. Script game "AI" and integrate it into the existing game code.  At this point, the game is functionally complete.
 1. Modify AI script to make it more interesting
     * Make it so whenever the AI sees more than one equivalently scored move, it will choose among the moves randomly
     * Make it so if the AI gets to move first, it does not always play the center spot
@@ -35,6 +35,7 @@ My basic approach to development (in chronological order):
 1. Minor AI and game logic refactor
     * AI code slightly DRYer
     * Removed check draw function (it was never necessary.  oops.)
+1. Refactored win logic so that the game is aware of which cells led to the win, allowing me to blink the row, column, or diagonal that led to the win.  This logic works if even if the player managed to win by creating more than one line simultaneously (that is to say, if the winning player managed to construct a row and a column or two diagonals, both winning lines will blink).
 
 Basically, I took a fairly logical and incremental approach to building out this code.
 
