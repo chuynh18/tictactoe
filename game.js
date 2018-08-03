@@ -134,6 +134,8 @@ const showBoard = function() {
     document.getElementById("board").classList.remove("hidden");
 }
 
+// I admit this is poorly named.  Only the very last part of the function is refreshDisplay.
+// This function also handles determining wins or draws.
 // updates game display (background color, whose turn it is, who won or game tied, and the state of the board itself)
 const refreshDisplay = function() {
     // intentionally using var here (because const is block scoped)
@@ -174,7 +176,7 @@ const refreshDisplay = function() {
     // updates win record display
     document.getElementById("score").innerHTML = `Player 1 wins: ${record.p1}<br>Player 2 wins: ${record.p2}<br>Ties: ${record.ties}`;
 
-    // appends "play again" button
+    // appends "play again" button and saves win/loss record to localStorage
     if (winner) {
         const buttons = document.createElement("div");
         buttons.id = "start-buttons";
