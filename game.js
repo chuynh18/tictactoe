@@ -272,6 +272,9 @@ const checkWinner = function() {
         let rowWin2 = true;
         let columnWin2 = true;
 
+        diagA[diagA.length] = gameBoard[i][i];
+        diagB[diagB.length] = gameBoard[i][2-i];
+
         for (let j = 0; j < gameBoard[i].length; j++) {
             row[row.length] = gameBoard[i][j];
             column[column.length] = gameBoard[j][i];
@@ -303,11 +306,6 @@ const checkWinner = function() {
     }
 
     // checks the two diagonals
-    for (let i = 0; i < gameBoard.length; i++) {
-        diagA[diagA.length] = gameBoard[i][i];
-        diagB[diagB.length] = gameBoard[i][2-i];
-    }
-
     for (let i = 0; i < diagA.length; i++) {
         if (diagA[i] !== 1) {
             diagWin1A = false;
