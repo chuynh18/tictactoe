@@ -194,7 +194,7 @@ const refreshDisplay = function() {
     // applies X and O + associated background color to the game board according to the game state
     for (let i = 0; i < gameBoard.length; i++) {
         for (let j = 0; j < gameBoard[i].length; j++) {
-            const cellId = document.getElementById(gameBoard.length * i + j);
+            const cellId = document.getElementById(String(gameBoard.length * i + j));
 
             if (gameBoard[i][j] === 1) {
                 cellId.textContent = "X";
@@ -436,15 +436,15 @@ const cellsInDir = function(row, col, dir) {
 const play = function() {
     // score array holds all possible moves the AI can make
     const score = [
-        {"score": 2, "valid": false, diagA: true, diagB: false},
-        {"score": 1, "valid": false, diagA: false, diagB: false},
-        {"score": 2, "valid": false, diagA: false, diagB: true},
-        {"score": 1, "valid": false, diagA: false, diagB: false},
-        {"score": 2, "valid": false, diagA: true, diagB: true},
-        {"score": 1, "valid": false, diagA: false, diagB: false},
-        {"score": 2, "valid": false, diagA: false, diagB: true},
-        {"score": 1, "valid": false, diagA: false, diagB: false},
-        {"score": 2, "valid": false, diagA: true, diagB: false},
+        {"score": 1, "valid": false, diagA: true, diagB: false},
+        {"score": 0, "valid": false, diagA: false, diagB: false},
+        {"score": 1, "valid": false, diagA: false, diagB: true},
+        {"score": 0, "valid": false, diagA: false, diagB: false},
+        {"score": 1, "valid": false, diagA: true, diagB: true},
+        {"score": 0, "valid": false, diagA: false, diagB: false},
+        {"score": 1, "valid": false, diagA: false, diagB: true},
+        {"score": 0, "valid": false, diagA: false, diagB: false},
+        {"score": 1, "valid": false, diagA: true, diagB: false},
     ];
     let maxScore = -Infinity;
     let maxIndex = 0;
@@ -458,7 +458,6 @@ const play = function() {
     for (let i = 0; i < gameBoard.length; i++) {
         for (let j = 0; j < gameBoard[i].length; j++) {
             const index = gameBoard.length * i + j;
-            const cellAsObj = {"row": i, "column": j};
 
             // if the cell is unplayed, modify its score
             if (gameBoard[i][j] === 0) {
