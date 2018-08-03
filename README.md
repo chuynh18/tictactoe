@@ -1,4 +1,4 @@
-Tic-tac-toe
+[Tic-tac-toe](https://chuynh18.github.io/tictactoe/)
 ===========
 
 Play Tic-tac-toe vs another player locally (sharing the same computer), against an AI (you can go first or second), or watch the computer play itself.
