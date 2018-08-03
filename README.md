@@ -32,13 +32,11 @@ My basic approach to development (in chronological order):
     * Hide the game board until the game is actually started
     * Pencil scribble audio to further differentiate Xs and Os
     * Save win/draw record to localStorage
+1. Minor AI and game logic refactor
+    * AI code slightly DRYer
+    * Removed check draw function (it was never necessary.  oops.)
 
 Basically, I took a fairly logical and incremental approach to building out this code.
-
-Potential Todo List
--------------------
-
-* DRY up "AI" code
 
 Other notes
 -----------

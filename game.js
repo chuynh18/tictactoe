@@ -112,10 +112,10 @@ const playSound = function(sound) {
 const changeTurn = function() {
     if (turn === 1) {
         playSound("x.webm");
-        turn = 2;
+        turn++;
     } else {
         playSound("o.webm");
-        turn = 1;
+        turn--;
     }
 
     turns++;
@@ -223,9 +223,8 @@ const getCellCoords = function(event) {
 const updateCell = function(cell) {
     if (!cellCheck(cell) && !winner) {
         gameBoard[cell.row][cell.column] = turn;
-        checkWinner();
-        checkTie();
         changeTurn();
+        checkWinner();
         refreshDisplay();
 
         // causes "AI" to make its play
@@ -329,23 +328,9 @@ const checkWinner = function() {
         winner = 1;
     } else if (diagWin2A || diagWin2B) {
         winner = 2;
-    }
-}
-
-// check to see if the game ended in a tied state
-const checkTie = function() {
-    let tie = true;
-
-    for (let i = 0; i < gameBoard.length; i++) {
-        for (let j = 0; j < gameBoard[i].length; j++) {
-            if (gameBoard[i][j] === 0) {
-                tie = false; 
-            }
-        }
-    }
-
-    if (tie && !winner) {
-        winner = -1;
+    // handle ties, eliminates checkTie function which was always unnecessary!
+    } else if (turns === 9 && !winner) {
+        winner = -1
     }
 }
 
@@ -369,64 +354,47 @@ const twoOutOfThree = function(cellsArrayOfObj) {
 
 // === cellsInRow, cellsInColumn, cellsInDiagA, cellsInDiagB:  so not DRY.  todo:  refactor ===
 
-const cellsInRow = function(input) {
-    const cells = [
-        {"row": input.row, "column": 0},
-        {"row": input.row, "column": 1},
-        {"row": input.row, "column": 2}
-    ];
+// direction:  0 = row, 1 = column, 2 = diagA, 3 = diagB
+const cellsInDir = function(row, col, direction) {
+    let cells;
 
-    for (let i = 0; i < cells.length; i++) {
-        if (input.column === cells[i].column) {
-            cells.splice(i, 1);
-        }
+    if (direction === 0) {
+        cells = [
+            {"row": row, "column": 0},
+            {"row": row, "column": 1},
+            {"row": row, "column": 2}
+        ];
+    } else if (direction === 1) {
+        cells = [
+            {"row": 0, "column": col},
+            {"row": 1, "column": col},
+            {"row": 2, "column": col}
+        ];
+    } else if (direction === 2) {
+        cells = [
+            {"row": 0, "column": 0},
+            {"row": 1, "column": 1},
+            {"row": 2, "column": 2}
+        ];
+    } else if (direction === 3) {
+        cells = [
+            {"row": 0, "column": 2},
+            {"row": 1, "column": 1},
+            {"row": 2, "column": 0}
+        ];
     }
 
-    return cells;
-}
-
-const cellsInColumn = function(input) {
-    const cells = [
-        {"row": 0, "column": input.column},
-        {"row": 1, "column": input.column},
-        {"row": 2, "column": input.column}
-    ];
-
-    for (let i = 0; i < cells.length; i++) {
-        if (input.row === cells[i].row) {
-            cells.splice(i, 1);
+    if (direction === 0) {
+        for (let i = 0; i < cells.length; i++) {
+            if (col === cells[i].column) {
+                cells.splice(i, 1);
+            }
         }
-    }
-
-    return cells;
-}
-
-const cellsInDiagA = function(input) {
-    const cells = [
-        {"row": 0, "column": 0},
-        {"row": 1, "column": 1},
-        {"row": 2, "column": 2}
-    ];
-
-    for (let i = 0; i < cells.length; i++) {
-        if (input.row === cells[i].row) {
-            cells.splice(i, 1);
-        }
-    }
-
-    return cells;
-}
-
-const cellsInDiagB = function(input) {
-    const cells = [
-        {"row": 0, "column": 2},
-        {"row": 1, "column": 1},
-        {"row": 2, "column": 0}
-    ];
-
-    for (let i = 0; i < cells.length; i++) {
-        if (input.row === cells[i].row) {
-            cells.splice(i, 1);
+    } else {
+        for (let i = 0; i < cells.length; i++) {
+            if (row === cells[i].row) {
+                cells.splice(i, 1);
+            }
         }
     }
 
@@ -462,8 +430,8 @@ const play = function() {
 
             // if the cell is unplayed, modify its score
             if (gameBoard[i][j] === 0) {
-                const row = cellsInRow(cellAsObj);
-                const col = cellsInColumn(cellAsObj);
+                const row = cellsInDir(i, j, 0);
+                const col = cellsInDir(i, j, 1);
                 let diagA;
                 let diagB;
 
@@ -481,7 +449,7 @@ const play = function() {
                 }
                 // if diagonal is applicable for the cell, perform the same logic as above
                 if (score[index].diagA) {
-                    diagA = cellsInDiagA(cellAsObj);
+                    diagA = cellsInDir(i, j, 2);
 
                     if (twoOutOfThree(diagA) === -1) {
                         score[index].score -= 1;
@@ -491,7 +459,7 @@ const play = function() {
                 }
                 
                 if (score[index].diagB) {
-                    diagB = cellsInDiagB(cellAsObj);
+                    diagB = cellsInDir(i, j, 3);
 
                     if (twoOutOfThree(diagB) === -1) {
                         score[index].score -= 1;
@@ -549,7 +517,7 @@ const play = function() {
     updateCell(cellToPlay);
 } // end of "AI" code
 
-// on page load, load from localStorage and render the page
+// on page load, load from localStorage and render the rest of the page
 window.onload = function() {
     loadRecord();
     reset();
