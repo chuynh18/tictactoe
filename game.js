@@ -355,31 +355,29 @@ const twoOutOfThree = function(cellsArrayOfObj) {
     }
 }
 
-// === cellsInRow, cellsInColumn, cellsInDiagA, cellsInDiagB:  so not DRY.  todo:  refactor ===
-
-// direction:  0 = row, 1 = column, 2 = diagA, 3 = diagB
-const cellsInDir = function(row, col, direction) {
+// dir:  0 = row, 1 = column, 2 = diagA, 3 = diagB
+const cellsInDir = function(row, col, dir) {
     let cells;
 
-    if (direction === 0) {
+    if (dir === 0) {
         cells = [
             {"row": row, "column": 0},
             {"row": row, "column": 1},
             {"row": row, "column": 2}
         ];
-    } else if (direction === 1) {
+    } else if (dir === 1) {
         cells = [
             {"row": 0, "column": col},
             {"row": 1, "column": col},
             {"row": 2, "column": col}
         ];
-    } else if (direction === 2) {
+    } else if (dir === 2) {
         cells = [
             {"row": 0, "column": 0},
             {"row": 1, "column": 1},
             {"row": 2, "column": 2}
         ];
-    } else if (direction === 3) {
+    } else if (dir === 3) {
         cells = [
             {"row": 0, "column": 2},
             {"row": 1, "column": 1},
@@ -387,7 +385,7 @@ const cellsInDir = function(row, col, direction) {
         ];
     }
 
-    if (direction === 0) {
+    if (dir === 0) {
         for (let i = 0; i < cells.length; i++) {
             if (col === cells[i].column) {
                 cells.splice(i, 1);
