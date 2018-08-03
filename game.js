@@ -202,8 +202,7 @@ const refreshDisplay = function() {
                 cellId.classList.add("o");
             } else {
                 cellId.textContent = "";
-                cellId.classList.remove("x");
-                cellId.classList.remove("o");
+                cellId.classList.remove("x", "xWin", "o", "oWin");
             }
         }
     }
@@ -263,19 +262,45 @@ const updateCell = function(cell) {
 const checkWinner = function() {
     const diagA = [];
     const diagB = [];
-    let diagWin1A = true;
-    let diagWin1B = true;
-    let diagWin2A = true;
-    let diagWin2B = true;
+    let diagWin1A = false;
+    let diagWin1B = false;
+    let diagWin2A = false;
+    let diagWin2B = false;
+
+    var highlightCells = function(index, typeOfWin, winnersClass) {
+        let cells;
+
+        if (typeOfWin === 1) {
+            cells = [[index, 0],[index, 1],[index, 2]];
+        } else if (typeOfWin === 2) {
+            cells = [[0, index],[1, index],[2, index]];
+        } else if (typeOfWin === 3) {
+            cells = [[0,0],[1,1],[2,2]];
+        } else if (typeOfWin === 4) {
+            cells = [[2,0],[1,1],[0,2]];
+        }
+
+        for (let i = 0; i < 6; i++) {
+            setTimeout(function() {
+                for (let j = 0; j < cells.length; j++) {
+                    const cellId = cells[j][0] * gameBoard.length + cells[j][1];
+                    document.getElementById(String(cellId)).classList.add(winnersClass);
+                    setTimeout(function() {
+                        document.getElementById(String(cellId)).classList.remove(winnersClass)
+                    }, 250);
+                }
+            }, 500*i);
+        }
+    }
 
     // checks rows and columns
     for (let i = 0; i < gameBoard.length; i++) {
         const row = [];
         const column = [];
-        let rowWin1 = true;
-        let columnWin1 = true;
-        let rowWin2 = true;
-        let columnWin2 = true;
+        let rowWin1 = false;
+        let columnWin1 = false;
+        let rowWin2 = false;
+        let columnWin2 = false;
 
         diagA[diagA.length] = gameBoard[i][i];
         diagB[diagB.length] = gameBoard[i][2-i];
@@ -285,22 +310,24 @@ const checkWinner = function() {
             column[column.length] = gameBoard[j][i];
         }
 
-        for (let k = 0; k < gameBoard.length; k++) {
-            if (row[k] !== 1) {
-                rowWin1 = false;
-            }
+        if (row[0] === 1 && row[1] === 1 && row[2] === 1) {
+            rowWin1 = true;
+            highlightCells(i, 1, "xWin");
+        }
 
-            if (column[k] !== 1) {
-                columnWin1 = false;
-            }
+        if (column[0] === 1 && column[1] === 1 && column[2] === 1) {
+            columnWin1 = true;
+            highlightCells(i, 2, "xWin");
+        }
 
-            if (row[k] !== 2) {
-                rowWin2 = false;
-            }
+        if (row[0] === 2 && row[1] === 2 && row[2] === 2) {
+            rowWin2 = true;
+            highlightCells(i, 1, "oWin");
+        }
 
-            if (column[k] !== 2) {
-                columnWin2 = false;
-            }
+        if (column[0] === 2 && column[1] === 2 && column[2] === 2) {
+            columnWin2 = true;
+            highlightCells(i, 2, "oWin");
         }
 
         if (rowWin1 || columnWin1) {
@@ -311,20 +338,22 @@ const checkWinner = function() {
     }
 
     // checks the two diagonals
-    for (let i = 0; i < diagA.length; i++) {
-        if (diagA[i] !== 1) {
-            diagWin1A = false;
-        }
-        if (diagB[i] !== 1) {
-            diagWin1B = false;
-        }
+    if (diagA[0] === 1 && diagA[1] === 1 && diagA[2] === 1) {
+        diagWin1A = true;
+        highlightCells(0, 3, "xWin");
+    }
+    if (diagB[0] === 1 && diagB[1] === 1 && diagB[2] === 1) {
+        diagWin1B = true;
+        highlightCells(0, 4, "xWin");
+    }
 
-        if (diagA[i] !== 2) {
-            diagWin2A = false;
-        }
-        if (diagB[i] !== 2) {
-            diagWin2B = false;
-        }
+    if (diagA[0] === 2 && diagA[1] === 2 && diagA[2] === 2) {
+        diagWin2A = true;
+        highlightCells(0, 3, "oWin");
+    }
+    if (diagB[0] === 2 && diagB[1] === 2 && diagB[2] === 2) {
+        diagWin2B = true;
+        highlightCells(0, 4, "oWin");
     }
 
     if (diagWin1A || diagWin1B) {

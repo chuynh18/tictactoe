@@ -5,6 +5,15 @@ html {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
+body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .heading {
     font-size: 52pt;
 }
@@ -53,8 +62,16 @@ button, #score {
     background-color: #778899;
 }
 
+.xWin {
+    background-color: #75a6d6;
+}
+
 .o {
     background-color: #aa8484;
+}
+
+.oWin {
+    background-color: #e07676;
 }
 
 .hidden {
