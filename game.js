@@ -77,9 +77,9 @@ const reset = function() {
     button2.textContent = "Human vs CPU";
     button2.setAttribute("onclick", "mode=2;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)')");
     button3.textContent = "CPU vs Human";
-    button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,1000)");
+    button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,500)");
     button4.textContent = "Spectate CPU vs CPU";
-    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,1000)");
+    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,900)");
 
     buttonList.appendChild(button1);
     buttonList.appendChild(button2);
