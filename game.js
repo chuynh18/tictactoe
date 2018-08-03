@@ -136,33 +136,38 @@ const showBoard = function() {
 
 // updates game display (background color, whose turn it is, who won or game tied, and the state of the board itself)
 const refreshDisplay = function() {
+    // intentionally using var here (because const is block scoped)
+    var turnId = document.getElementById("turn");
+    var html = document.getElementsByTagName("html")[0];
+    var board = document.getElementById("board");
     
     // appends game status text and changes the page and board colors
     if (winner === 1) {
         record.p1++;
-        document.getElementById("turn").textContent = "Player 1 wins";
-        document.getElementsByTagName("html")[0].style.backgroundColor = "#778899";
-        document.getElementById("board").style.backgroundColor = "#2196F3";
+        turnId.textContent = "Player 1 wins";
+        html.style.backgroundColor = "#778899";
+        board.style.backgroundColor = "#2196F3";
     } else if (winner === 2) {
         record.p2++;
-        document.getElementById("turn").textContent = "Player 2 wins";
-        document.getElementsByTagName("html")[0].style.backgroundColor = "#aa8484";
-        document.getElementById("board").style.backgroundColor = "#f32121";
+        turnId.textContent = "Player 2 wins";
+        html.style.backgroundColor = "#aa8484";
+        board.style.backgroundColor = "#f32121";
     } else if (winner === -1) {
         record.ties++;
-        document.getElementById("turn").textContent = "Tied game";
-        document.getElementsByTagName("html")[0].style.backgroundColor = "#c4fcc2";
-        document.getElementById("board").style.backgroundColor = "#36fc2f";
+        turnId.textContent = "Tied game";
+        html.style.backgroundColor = "#c4fcc2";
+        board.style.backgroundColor = "#36fc2f";
     } else if (!winner && mode) {
+        // if I used const for turnId, html, and board, they wouldn't be defined here!
         if (turn === 1) {
-            document.getElementsByTagName("html")[0].style.backgroundColor = "#778899";
-            document.getElementById("board").style.backgroundColor = "#2196F3";
-            document.getElementById("turn").textContent = "Player 1's turn";
+            html.style.backgroundColor = "#778899";
+            board.style.backgroundColor = "#2196F3";
+            turnId.textContent = "Player 1's turn";
         }
         else {
-            document.getElementsByTagName("html")[0].style.backgroundColor = "#aa8484";
-            document.getElementById("board").style.backgroundColor = "#f32121";
-            document.getElementById("turn").textContent = "Player 2's turn";
+            html.style.backgroundColor = "#aa8484";
+            board.style.backgroundColor = "#f32121";
+            turnId.textContent = "Player 2's turn";
         }
     }
 
