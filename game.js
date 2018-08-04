@@ -696,10 +696,10 @@ const play = function(actuallyPlay) {
 
     // increase value of corners after the first turn
     if (turns > 0) {
-        score[0].score += 2;
-        score[2].score += 2;
-        score[6].score += 2;
-        score[8].score += 2;
+        score[0].score += 1;
+        score[2].score += 1;
+        score[6].score += 1;
+        score[8].score += 1;
     }
 
     // prevent edge case loss by increasing score of non-diagonal moves
