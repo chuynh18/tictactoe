@@ -79,7 +79,7 @@ const reset = function() {
     button3.textContent = "CPU vs Human";
     button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,500)");
     button4.textContent = "Spectate CPU vs CPU";
-    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,900)");
+    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,0)");
 
     buttonList.appendChild(button1);
     buttonList.appendChild(button2);
@@ -255,7 +255,7 @@ const updateCell = function(cell) {
         } else if (mode === 4 && !winner) {
             setTimeout(function() {
                 play();
-            }, 900);
+            }, 0);
         }
     }
 }
@@ -386,8 +386,21 @@ const twoOutOfThree = function(cellsArrayOfObj) {
     }
 }
 
+// code specifically to make it so AI can play non-diagonal + non-center cell in turn 1 without losing
+const emptyLine = function(cellsArrayOfObj) {
+    const cell0 = gameBoard[cellsArrayOfObj[0].row][cellsArrayOfObj[0].column];
+    const cell1 = gameBoard[cellsArrayOfObj[1].row][cellsArrayOfObj[1].column];
+    const cell2 = gameBoard[cellsArrayOfObj[2].row][cellsArrayOfObj[2].column];
+
+    if (!cell0 && !cell1 && !cell2) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // dir:  0 = row, 1 = column, 2 = diagA, 3 = diagB
-const cellsInDir = function(row, col, dir) {
+const cellsInDir = function(row, col, dir, remove) {
     let cells;
 
     if (dir === 0) {
@@ -416,35 +429,37 @@ const cellsInDir = function(row, col, dir) {
         ];
     }
 
-    if (dir === 0) {
-        for (let i = 0; i < cells.length; i++) {
-            if (col === cells[i].column) {
-                cells.splice(i, 1);
+    if (remove) {
+        if (dir === 0) {
+            for (let i = 0; i < cells.length; i++) {
+                if (col === cells[i].column) {
+                    cells.splice(i, 1);
+                }
             }
-        }
-    } else {
-        for (let i = 0; i < cells.length; i++) {
-            if (row === cells[i].row) {
-                cells.splice(i, 1);
+        } else {
+            for (let i = 0; i < cells.length; i++) {
+                if (row === cells[i].row) {
+                    cells.splice(i, 1);
+                }
             }
         }
     }
-
+    
     return cells;
 }
 
 const play = function() {
     // score array holds all possible moves the AI can make
     const score = [
-        {"score": 1, "valid": false, diagA: true, diagB: false},
+        {"score": 0, "valid": false, diagA: true, diagB: false},
         {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 1, "valid": false, diagA: false, diagB: true},
+        {"score": 0, "valid": false, diagA: false, diagB: true},
         {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 1, "valid": false, diagA: true, diagB: true},
+        {"score": 0, "valid": false, diagA: true, diagB: true},
         {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 1, "valid": false, diagA: false, diagB: true},
+        {"score": 0, "valid": false, diagA: false, diagB: true},
         {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 1, "valid": false, diagA: true, diagB: false},
+        {"score": 0, "valid": false, diagA: true, diagB: false},
     ];
     let maxScore = -Infinity;
     let maxIndex = 0;
@@ -461,43 +476,109 @@ const play = function() {
 
             // if the cell is unplayed, modify its score
             if (gameBoard[i][j] === 0) {
-                const row = cellsInDir(i, j, 0);
-                const col = cellsInDir(i, j, 1);
+                const row = cellsInDir(i, j, 0, true);
+                const col = cellsInDir(i, j, 1, true);
                 let diagA;
                 let diagB;
 
                 // bump cell score by 2 if playing that cell would block the row or match 3 in the row
                 if (twoOutOfThree(row) === -1) {
                     score[index].score -= 1;
-                } else if (twoOutOfThree(row) !== 0) {
-                    score[index].score += 2;
+                } else if (twoOutOfThree(row) !== turn && twoOutOfThree(row) !== 0) {
+                    score[index].score += 3;
+                } else if (twoOutOfThree(row) === turn && twoOutOfThree(row) !== 0) {
+                    score[index].score += 4;
                 }
                 // same as above, but for column
                 if (twoOutOfThree(col) === -1) {
                     score[index].score -= 1;
-                } else if (twoOutOfThree(col) !== 0) {
-                    score[index].score += 2;
+                } else if (twoOutOfThree(col) !== turn && twoOutOfThree(col) !== 0) {
+                    score[index].score += 3;
+                } else if (twoOutOfThree(col) === turn && twoOutOfThree(col) !== 0) {
+                    score[index].score += 4;
                 }
                 // if diagonal is applicable for the cell, perform the same logic as above
                 if (score[index].diagA) {
-                    diagA = cellsInDir(i, j, 2);
+                    diagA = cellsInDir(i, j, 2, true);
 
                     if (twoOutOfThree(diagA) === -1) {
                         score[index].score -= 1;
-                    } else if (twoOutOfThree(diagA) !== 0) {
-                        score[index].score += 2;
+                    } else if (twoOutOfThree(diagA) !== turn && twoOutOfThree(diagA) !== 0) {
+                        score[index].score += 3;
+                    } else if (twoOutOfThree(diagA) === turn && twoOutOfThree(diagA) !== 0) {
+                        score[index].score += 4;
                     }
                 }
-                
                 if (score[index].diagB) {
-                    diagB = cellsInDir(i, j, 3);
+                    diagB = cellsInDir(i, j, 3, true);
 
                     if (twoOutOfThree(diagB) === -1) {
                         score[index].score -= 1;
-                    } else if (twoOutOfThree(diagB) !== 0) {
-                        score[index].score += 2;
+                    } else if (twoOutOfThree(diagB) !== turn && twoOutOfThree(diagB) !== 0) {
+                        score[index].score += 3;
+                    } else if (twoOutOfThree(diagB) === turn && twoOutOfThree(diagB) !== 0) {
+                        score[index].score += 4;
                     }
                 }
+
+                // code specifically to make it so AI can play non-diagonal + non-center cell in turn 1 without losing
+                if (((i === 0 && j === 0) || (i === 2 && j === 2)) && turns === 3) {
+                    const emptyRowCandidateTop = cellsInDir(0, 0, 0, false);
+                    const emptyRowCandidateBottom = cellsInDir(2, 2, 0, false);
+                    const emptyColCandidateLeft = cellsInDir(0, 0, 1, false);
+                    const emptyColCandidateRight = cellsInDir(2, 2, 1, false);
+                    
+                    var decreaseLineScore = function(cellsArrayOfObj) {
+                        for (let i = 0; i < cellsArrayOfObj.length; i++) {
+                            const cellId = cellsArrayOfObj[i].row * gameBoard.length + cellsArrayOfObj[i].column;
+                        
+                            score[cellId].score -= 1;
+                        }
+                    }
+
+                    if (emptyLine(emptyRowCandidateTop) && !emptyLine(emptyRowCandidateBottom)) {
+                        if (!emptyLine(emptyColCandidateLeft) && !emptyLine(emptyColCandidateRight)) {
+                            decreaseLineScore(emptyRowCandidateTop);
+                        } else if (!emptyLine(emptyColCandidateLeft)) {
+                            decreaseLineScore(emptyRowCandidateTop);
+                            decreaseLineScore(emptyColCandidateRight);
+                        } else if (!emptyLine(emptyColCandidateRight)) {
+                            decreaseLineScore(emptyRowCandidateTop);
+                            decreaseLineScore(emptyColCandidateLeft);
+                        }
+                    } else if (!emptyLine(emptyRowCandidateTop) && emptyLine(emptyRowCandidateBottom)) {
+                        if (!emptyLine(emptyColCandidateLeft) && !emptyLine(emptyColCandidateRight)) {
+                            decreaseLineScore(emptyRowCandidateBottom);
+                        } else if (!emptyLine(emptyColCandidateLeft)) {
+                            decreaseLineScore(emptyRowCandidateBottom);
+                            decreaseLineScore(emptyColCandidateRight);
+                        } else if (!emptyLine(emptyColCandidateRight)) {
+                            decreaseLineScore(emptyRowCandidateBottom);
+                            decreaseLineScore(emptyColCandidateLeft);
+                        }
+                    } else if (emptyLine(emptyColCandidateLeft) && !emptyLine(emptyColCandidateRight)) {
+                        if (!emptyLine(emptyRowCandidateTop) && !emptyLine(emptyRowCandidateBottom)) {
+                            decreaseLineScore(emptyColCandidateLeft);
+                        } else if (!emptyLine(emptyRowCandidateTop)) {
+                            decreaseLineScore(emptyColCandidateLeft);
+                            decreaseLineScore(emptyRowCandidateBottom);
+                        } else if (!emptyLine(emptyRowCandidateBottom)) {
+                            decreaseLineScore(emptyColCandidateLeft);
+                            decreaseLineScore(emptyRowCandidateTop);
+                        }
+                    } else if (!emptyLine(emptyColCandidateLeft) && emptyLine(emptyColCandidateRight)) {
+                        if (!emptyLine(emptyRowCandidateTop) && !emptyLine(emptyRowCandidateBottom)) {
+                            decreaseLineScore(emptyColCandidateRight);
+                        } else if (!emptyLine(emptyRowCandidateTop)) {
+                            decreaseLineScore(emptyColCandidateRight);
+                            decreaseLineScore(emptyRowCandidateBottom);
+                        } else if (!emptyLine(emptyRowCandidateBottom)) {
+                            decreaseLineScore(emptyColCandidateRight);
+                            decreaseLineScore(emptyRowCandidateTop);
+                        }
+                    }
+                }
+
                 // if the cell is playable, flag it as a valid play
                 score[index].valid = true;
             }
@@ -506,7 +587,11 @@ const play = function() {
 
     // increase diversity of AI moves by prioritizing the center later
     if (turns > 0) {
-        score[4].score = 420;
+        score[0].score += 2;
+        score[2].score += 2;
+        score[4].score += 420;
+        score[6].score += 2;
+        score[8].score += 2;
     }
 
     // prevent edge case loss by increasing score of non-diagonal moves
@@ -544,6 +629,11 @@ const play = function() {
 
     cellToPlay.row = Math.floor(maxIndex / 3);
     cellToPlay.column = maxIndex % 3;
+
+    console.log(turns);
+    console.log(cellToPlay);
+    console.log(score);
+    console.log("");
 
     updateCell(cellToPlay);
 } // end of "AI" code
