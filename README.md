@@ -44,10 +44,23 @@ My basic approach to development (in chronological order):
 1. Added hint button
     * Game will suggest a play.  This makes the shortcomings of the Tic-tac-toe playing script quite obvious, as while it will never suggest a losing move, it does not suggest all possible non-losing moves.  Additionally, some suggested moves will seem to be weaker than others.  Still, the script is "perfect" in the sense that it will always play to a draw and it will never fail to punish human mistakes.  I think.
     * This was an extremely easy feature to add.  It only required very slight modification of the existing `play()` function.  In other words, the suggested squares are the squares that may have been played if the AI was playing.  Take a look at the console to peek under the hood!  This is outputted by the `play()` function, so you'll see this whenever the AI is playing or whenever you click the hint button.
-1. Major change:  Computer can now look ahead 1 turn in order to better punish human mistakes.  The machine got stronger in the sense that it can now detect and punish more mistakes that humans may make.  It should not be any more or less likely to lose (the chance of it losing should still be 0%); it's just better at winning.
-    * This was a more risky change, so I put most of its code behind a feature toggle.  However, outside that feature toggle, I had to touch some existing functions to accommodate this change, but those changes were relatively simple.
+1. Major changes:
+    * Computer can now look ahead 1 turn in order to better punish human mistakes.  The machine got stronger in the sense that it can now detect and punish more mistakes that humans may make.  It should not be any more or less likely to lose (the chance of it losing should still be 0%); it's just better at winning.  This was a more risky change, so I put most of its code behind a feature toggle.  However, outside that feature toggle, I had to touch some existing functions to accommodate this change, but those changes were relatively simple.  Set `lookAhead: true` in `featureToggle.js` to enable.
 
 Basically, I took a fairly logical and incremental approach to building out this code.  I moved as quickly as possible in getting to functional MVP, then added extra stuff later.
+
+Feature toggles
+---------------
+
+As mentioned above, I've added feature toggles to the code.  Images make the behaviorial differences more stark...
+
+`lookAhead: false`:  AI does not punish this board configuration
+
+![`lookAhead: false`](lookAheadFalse.png)
+
+`lookAhead: true`:  AI correctly identifies a move that guarantees victory
+
+![`lookAhead: true`](lookAheadTrue.png)
 
 Retrospective
 -------------

@@ -540,23 +540,28 @@ const play = function(actuallyPlay) {
                     const diagAAhead = cellsInDir(1, 1, 2, false);
                     const diagBAhead = cellsInDir(1, 1, 3, false);
 
-                    if (twoOutOfThree([diagAAhead[0], diagAAhead[1]], gameBoardCopy) === turn && diagAAhead[2] !== inverseTurn) {
-                        score[index].score += 2;
+                    if (score[index].diagA) {
+                        if (twoOutOfThree([diagAAhead[0], diagAAhead[1]], gameBoardCopy) === turn && diagAAhead[2] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([diagAAhead[0], diagAAhead[2]], gameBoardCopy) === turn && diagAAhead[1] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([diagAAhead[1], diagAAhead[2]], gameBoardCopy) === turn && diagAAhead[0] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
                     }
-                    if (twoOutOfThree([diagAAhead[0], diagAAhead[2]], gameBoardCopy) === turn && diagAAhead[1] !== inverseTurn) {
-                        score[index].score += 2;
-                    }
-                    if (twoOutOfThree([diagAAhead[1], diagAAhead[2]], gameBoardCopy) === turn && diagAAhead[0] !== inverseTurn) {
-                        score[index].score += 2;
-                    }
-                    if (twoOutOfThree([diagBAhead[0], diagBAhead[1]], gameBoardCopy) === turn && diagBAhead[2] !== inverseTurn) {
-                        score[index].score += 2;
-                    }
-                    if (twoOutOfThree([diagBAhead[0], diagBAhead[2]], gameBoardCopy) === turn && diagBAhead[1] !== inverseTurn) {
-                        score[index].score += 2;
-                    }
-                    if (twoOutOfThree([diagBAhead[1], diagBAhead[2]], gameBoardCopy) === turn && diagBAhead[0] !== inverseTurn) {
-                        score[index].score += 2;
+                    
+                    if (score[index].diagB) {
+                        if (twoOutOfThree([diagBAhead[0], diagBAhead[1]], gameBoardCopy) === turn && diagBAhead[2] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([diagBAhead[0], diagBAhead[2]], gameBoardCopy) === turn && diagBAhead[1] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([diagBAhead[1], diagBAhead[2]], gameBoardCopy) === turn && diagBAhead[0] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
                     }
 
                     for (let k = 0; k < gameBoard.length; k++) {
@@ -699,10 +704,11 @@ const play = function(actuallyPlay) {
         score[4].score += 420;
     }
 
-    // increase value of corners after the first turn
+    // increase value of corners and center after the first turn
     if (turns > 0) {
         score[0].score += 1;
         score[2].score += 1;
+        score[4].score += 1;
         score[6].score += 1;
         score[8].score += 1;
     }
