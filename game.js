@@ -11,6 +11,7 @@ let gameBoard = [
 
 // tracks whose turn it is
 let turn = 1;
+let inverseTurn = 2;
 
 // tracks number of turns elapsed.  Only useful for AI workaround due to deprioritizing the center of the board.
 let turns = 0;
@@ -79,7 +80,7 @@ const reset = function() {
     button3.textContent = "CPU vs Human";
     button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(function(){play(true)},500)");
     button4.textContent = "Spectate CPU vs CPU";
-    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(function(){play(true)},900)");
+    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(function(){play(true)},0)");
 
     buttonList.appendChild(button1);
     buttonList.appendChild(button2);
@@ -113,9 +114,11 @@ const changeTurn = function() {
     if (turn === 1) {
         playSound("x.webm");
         turn++;
+        inverseTurn--;
     } else {
         playSound("o.webm");
         turn--;
+        inverseTurn++;
     }
 
     turns++;
@@ -259,8 +262,12 @@ const refreshDisplay = function() {
 }
 
 // checks the value of the clicked cell
-const cellCheck = function(cell) {
-    return gameBoard[cell.row][cell.column];
+const cellCheck = function(cell, target) {
+    if (!target) {
+        return gameBoard[cell.row][cell.column];
+    } else {
+        return target[cell.row][cell.column];
+    }
 }
 
 // gets the coordinates of the clicked cell, triggered by click.  Triggers game logic by calling updateCell.
@@ -305,7 +312,7 @@ const updateCell = function(cell) {
         } else if (mode === 4 && !winner) {
             setTimeout(function() {
                 play(true);
-            }, 900);
+            }, 0);
         }
     }
 }
@@ -321,13 +328,6 @@ const checkWinner = function() {
 
     var highlightCells = function(index, typeOfWin) {
         let cells;
-        let inverseTurn;
-
-        if (turn === 1) {
-            inverseTurn = 2;
-        } else if (turn === 2) {
-            inverseTurn = 1;
-        }
 
         if (typeOfWin === 1) {
             cells = [index * gameBoard.length, index * gameBoard.length + 1, index * gameBoard.length + 2];
@@ -422,15 +422,16 @@ const checkWinner = function() {
 // ===========================
 
 // checks to see if a move would lead to winning or denying the other player a win
-const twoOutOfThree = function(cellsArrayOfObj) {
-    if (cellCheck(cellsArrayOfObj[0]) === 1 && cellCheck(cellsArrayOfObj[1]) === 1) {
+const twoOutOfThree = function(cellsArrayOfObj, altTarget) {
+    if (cellCheck(cellsArrayOfObj[0], altTarget) === 1 && cellCheck(cellsArrayOfObj[1], altTarget) === 1) {
         return 1;
-    } else if (cellCheck(cellsArrayOfObj[0]) === 2 && cellCheck(cellsArrayOfObj[1]) === 2) {
+    } else if (cellCheck(cellsArrayOfObj[0], altTarget) === 2 && cellCheck(cellsArrayOfObj[1], altTarget) === 2) {
         return 2;
     // added in to prevent suboptimal play (no need to play a cell that won't benefit the player)
-    } else if ((cellCheck(cellsArrayOfObj[0]) === 1 && cellCheck(cellsArrayOfObj[1]) === 2) || (cellCheck(cellsArrayOfObj[0]) === 2 && cellCheck(cellsArrayOfObj[1]) === 1)) {
+    } else if ((cellCheck(cellsArrayOfObj[0], altTarget) === 1 && cellCheck(cellsArrayOfObj[1], altTarget) === 2) || (cellCheck(cellsArrayOfObj[0], altTarget) === 2 && cellCheck(cellsArrayOfObj[1], altTarget) === 1)) {
         return -1;
-    } else {
+    }
+     else {
         return 0;
     }
 }
@@ -530,22 +531,75 @@ const play = function(actuallyPlay) {
                 const col = cellsInDir(i, j, 1, true);
                 let diagA;
                 let diagB;
+                let gameBoardCopy;
+                
+                if (featureToggle.lookAhead) {
+                    gameBoardCopy = [...gameBoard];
+                    gameBoardCopy[i][j] = turn;
+                    const diagAAhead = cellsInDir(1, 1, 2, false);
+                    const diagBAhead = cellsInDir(1, 1, 3, false);
 
-                // bump cell score by 2 if playing that cell would block the row or match 3 in the row
+                    if (twoOutOfThree([diagAAhead[0], diagAAhead[1]], gameBoardCopy) === turn && diagAAhead[2] !== inverseTurn) {
+                        score[index].score += 2;
+                    }
+                    if (twoOutOfThree([diagAAhead[0], diagAAhead[2]], gameBoardCopy) === turn && diagAAhead[1] !== inverseTurn) {
+                        score[index].score += 2;
+                    }
+                    if (twoOutOfThree([diagAAhead[1], diagAAhead[2]], gameBoardCopy) === turn && diagAAhead[0] !== inverseTurn) {
+                        score[index].score += 2;
+                    }
+                    if (twoOutOfThree([diagBAhead[0], diagBAhead[1]], gameBoardCopy) === turn && diagBAhead[2] !== inverseTurn) {
+                        score[index].score += 2;
+                    }
+                    if (twoOutOfThree([diagBAhead[0], diagBAhead[2]], gameBoardCopy) === turn && diagBAhead[1] !== inverseTurn) {
+                        score[index].score += 2;
+                    }
+                    if (twoOutOfThree([diagBAhead[1], diagBAhead[2]], gameBoardCopy) === turn && diagBAhead[0] !== inverseTurn) {
+                        score[index].score += 2;
+                    }
+
+                    for (let k = 0; k < gameBoard.length; k++) {
+                        const rowAhead = cellsInDir(k, k, 0, false);
+                        const colAhead = cellsInDir(k, k, 1, false);
+
+                        if (twoOutOfThree([rowAhead[0], rowAhead[1]], gameBoardCopy) === turn && rowAhead[2] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([rowAhead[0], rowAhead[2]], gameBoardCopy) === turn && rowAhead[1] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([rowAhead[1], rowAhead[2]], gameBoardCopy) === turn && rowAhead[0] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([colAhead[0], colAhead[1]], gameBoardCopy) === turn && colAhead[2] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([colAhead[0], colAhead[2]], gameBoardCopy) === turn && colAhead[1] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                        if (twoOutOfThree([colAhead[1], colAhead[2]], gameBoardCopy) === turn && colAhead[0] !== inverseTurn) {
+                            score[index].score += 2;
+                        }
+                    }
+
+                    gameBoardCopy[i][j] = 0;
+                }
+
+                // bump cell score if playing that cell would block the row or match 3 in the row
                 if (twoOutOfThree(row) === -1) {
                     score[index].score -= 1;
                 } else if (twoOutOfThree(row) !== turn && twoOutOfThree(row) !== 0) {
-                    score[index].score += 3;
+                    score[index].score += 9;
                 } else if (twoOutOfThree(row) === turn && twoOutOfThree(row) !== 0) {
-                    score[index].score += 4;
+                    score[index].score += 10;
                 }
                 // same as above, but for column
                 if (twoOutOfThree(col) === -1) {
                     score[index].score -= 1;
                 } else if (twoOutOfThree(col) !== turn && twoOutOfThree(col) !== 0) {
-                    score[index].score += 3;
+                    score[index].score += 9;
                 } else if (twoOutOfThree(col) === turn && twoOutOfThree(col) !== 0) {
-                    score[index].score += 4;
+                    score[index].score += 10;
                 }
                 // if diagonal is applicable for the cell, perform the same logic as above
                 if (score[index].diagA) {
@@ -554,9 +608,9 @@ const play = function(actuallyPlay) {
                     if (twoOutOfThree(diagA) === -1) {
                         score[index].score -= 1;
                     } else if (twoOutOfThree(diagA) !== turn && twoOutOfThree(diagA) !== 0) {
-                        score[index].score += 3;
+                        score[index].score += 9;
                     } else if (twoOutOfThree(diagA) === turn && twoOutOfThree(diagA) !== 0) {
-                        score[index].score += 4;
+                        score[index].score += 10;
                     }
                 }
                 if (score[index].diagB) {
@@ -565,9 +619,9 @@ const play = function(actuallyPlay) {
                     if (twoOutOfThree(diagB) === -1) {
                         score[index].score -= 1;
                     } else if (twoOutOfThree(diagB) !== turn && twoOutOfThree(diagB) !== 0) {
-                        score[index].score += 3;
+                        score[index].score += 9;
                     } else if (twoOutOfThree(diagB) === turn && twoOutOfThree(diagB) !== 0) {
-                        score[index].score += 4;
+                        score[index].score += 10;
                     }
                 }
 
