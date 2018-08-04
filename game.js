@@ -134,6 +134,26 @@ const showBoard = function() {
     document.getElementById("board").classList.remove("hidden");
 }
 
+// blinks cell
+const blink = function(cellId, turn, numBlinks) {
+    let colorClass;
+
+    if (turn === 1) {
+        colorClass = "xWin";
+    } else {
+        colorClass = "oWin";
+    }
+
+    for (let i = 0; i < numBlinks; i++) {
+        setTimeout(function() {
+            document.getElementById(String(cellId)).classList.add(colorClass);
+            setTimeout(function() {
+                document.getElementById(String(cellId)).classList.remove(colorClass)
+            }, 250);
+        }, 500*i);
+    }
+}
+
 // I admit this is poorly named.  Only the very last part of the function is refreshDisplay.
 // This function also handles determining wins or draws.
 // updates game display (background color, whose turn it is, who won or game tied, and the state of the board itself)
@@ -247,7 +267,8 @@ const cellCheck = function(cell) {
 const getCellCoords = function(event) {
     const cell = {
         "row": Math.floor(Number(event.target.id)/3),
-        "column": Math.floor(Number(event.target.id)%3)
+        "column": Math.floor(Number(event.target.id)%3),
+        "cellId": event.target.id
     };
 
     updateCell(cell);
@@ -257,6 +278,7 @@ const getCellCoords = function(event) {
 const updateCell = function(cell) {
     if (!cellCheck(cell) && !winner) {
         gameBoard[cell.row][cell.column] = turn;
+        blink(cell.cellId, turn, 1);
         changeTurn();
         checkWinner();
         refreshDisplay();
@@ -297,29 +319,28 @@ const checkWinner = function() {
     let diagWin2A = false;
     let diagWin2B = false;
 
-    var highlightCells = function(index, typeOfWin, winnersClass) {
+    var highlightCells = function(index, typeOfWin) {
         let cells;
+        let inverseTurn;
 
-        if (typeOfWin === 1) {
-            cells = [[index, 0],[index, 1],[index, 2]];
-        } else if (typeOfWin === 2) {
-            cells = [[0, index],[1, index],[2, index]];
-        } else if (typeOfWin === 3) {
-            cells = [[0,0],[1,1],[2,2]];
-        } else if (typeOfWin === 4) {
-            cells = [[2,0],[1,1],[0,2]];
+        if (turn === 1) {
+            inverseTurn = 2;
+        } else if (turn === 2) {
+            inverseTurn = 1;
         }
 
-        for (let i = 0; i < 6; i++) {
-            setTimeout(function() {
-                for (let j = 0; j < cells.length; j++) {
-                    const cellId = cells[j][0] * gameBoard.length + cells[j][1];
-                    document.getElementById(String(cellId)).classList.add(winnersClass);
-                    setTimeout(function() {
-                        document.getElementById(String(cellId)).classList.remove(winnersClass)
-                    }, 250);
-                }
-            }, 500*i);
+        if (typeOfWin === 1) {
+            cells = [index * gameBoard.length, index * gameBoard.length + 1, index * gameBoard.length + 2];
+        } else if (typeOfWin === 2) {
+            cells = [index, gameBoard.length + index, 2 * gameBoard.length + index];
+        } else if (typeOfWin === 3) {
+            cells = [0, 4, 8];
+        } else if (typeOfWin === 4) {
+            cells = [2, 4, 6];
+        }
+
+        for (let i = 0; i < cells.length; i++) {
+            blink(cells[i], inverseTurn, 6);
         }
     }
 
@@ -342,22 +363,22 @@ const checkWinner = function() {
 
         if (row[0] === 1 && row[1] === 1 && row[2] === 1) {
             rowWin1 = true;
-            highlightCells(i, 1, "xWin");
+            highlightCells(i, 1);
         }
 
         if (column[0] === 1 && column[1] === 1 && column[2] === 1) {
             columnWin1 = true;
-            highlightCells(i, 2, "xWin");
+            highlightCells(i, 2);
         }
 
         if (row[0] === 2 && row[1] === 2 && row[2] === 2) {
             rowWin2 = true;
-            highlightCells(i, 1, "oWin");
+            highlightCells(i, 1);
         }
 
         if (column[0] === 2 && column[1] === 2 && column[2] === 2) {
             columnWin2 = true;
-            highlightCells(i, 2, "oWin");
+            highlightCells(i, 2);
         }
 
         if (rowWin1 || columnWin1) {
@@ -494,7 +515,8 @@ const play = function(actuallyPlay) {
     const equivalentPlays = [];
     const cellToPlay = {
         "row": 0,
-        "column": 0
+        "column": 0,
+        "cellId": 0
     };
 
     // iterate over the game board
@@ -659,8 +681,9 @@ const play = function(actuallyPlay) {
         maxIndex = equivalentPlays[Math.floor(Math.random() * equivalentPlays.length)];
     }
 
-    cellToPlay.row = Math.floor(maxIndex / 3);
-    cellToPlay.column = maxIndex % 3;
+    cellToPlay.row = Math.floor(maxIndex / gameBoard.length);
+    cellToPlay.column = maxIndex % gameBoard.length;
+    cellToPlay.cellId = maxIndex;
 
     console.log("Turn:", turns);
     console.log(`Play: ${cellToPlay.row}, ${cellToPlay.column}`);
@@ -670,27 +693,8 @@ const play = function(actuallyPlay) {
     if (actuallyPlay) {
         updateCell(cellToPlay);
     } else {
-        var blink = function(cellId, turn) {
-            let colorClass;
-
-            if (turn === 1) {
-                colorClass = "xWin";
-            } else {
-                colorClass = "oWin";
-            }
-
-            for (let i = 0; i < 3; i++) {
-                setTimeout(function() {
-                    document.getElementById(String(cellId)).classList.add(colorClass);
-                    setTimeout(function() {
-                        document.getElementById(String(cellId)).classList.remove(colorClass)
-                    }, 250);
-                }, 500*i);
-            }
-        }
-
         for (let i = 0; i < equivalentPlays.length; i++) {
-            blink(equivalentPlays[i], turn);
+            blink(equivalentPlays[i], turn, 3);
         }
     }
     
@@ -701,3 +705,5 @@ window.onload = function() {
     loadRecord();
     reset();
 }
+
+window.ondragstart = function() { return false; } 

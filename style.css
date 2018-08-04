@@ -14,6 +14,12 @@ body {
     user-select: none;
 }
 
+.gh {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .heading {
     font-size: 52pt;
 }
