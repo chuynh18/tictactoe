@@ -533,6 +533,7 @@ const play = function(actuallyPlay) {
                 let diagB;
                 let gameBoardCopy;
                 
+                // this looks ahead by 1 turn (in other words, it plays every possible play and scores the board position)
                 if (featureToggle.lookAhead) {
                     gameBoardCopy = [...gameBoard];
                     gameBoardCopy[i][j] = turn;
@@ -587,10 +588,13 @@ const play = function(actuallyPlay) {
 
                 // bump cell score if playing that cell would block the row or match 3 in the row
                 if (twoOutOfThree(row) === -1) {
+                    // don't make futile plays
                     score[index].score -= 1;
                 } else if (twoOutOfThree(row) !== turn && twoOutOfThree(row) !== 0) {
+                    // it's very important to block
                     score[index].score += 9;
                 } else if (twoOutOfThree(row) === turn && twoOutOfThree(row) !== 0) {
+                    // but it's more important to win
                     score[index].score += 10;
                 }
                 // same as above, but for column
@@ -606,7 +610,8 @@ const play = function(actuallyPlay) {
                     diagA = cellsInDir(i, j, 2, true);
 
                     if (twoOutOfThree(diagA) === -1) {
-                        score[index].score -= 1;
+                        // this is not a mistake, as diagonals are different.  make the AI set up a trap.
+                        score[index].score += 1;
                     } else if (twoOutOfThree(diagA) !== turn && twoOutOfThree(diagA) !== 0) {
                         score[index].score += 9;
                     } else if (twoOutOfThree(diagA) === turn && twoOutOfThree(diagA) !== 0) {
@@ -617,7 +622,7 @@ const play = function(actuallyPlay) {
                     diagB = cellsInDir(i, j, 3, true);
 
                     if (twoOutOfThree(diagB) === -1) {
-                        score[index].score -= 1;
+                        score[index].score += 1;
                     } else if (twoOutOfThree(diagB) !== turn && twoOutOfThree(diagB) !== 0) {
                         score[index].score += 9;
                     } else if (twoOutOfThree(diagB) === turn && twoOutOfThree(diagB) !== 0) {
