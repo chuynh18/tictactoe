@@ -43,6 +43,7 @@ My basic approach to development (in chronological order):
     * This took a bit of thinking in terms of how to parse the state of the board in order to have the machine not fall into certain board traps.
 1. Added hint button
     * Game will suggest a play.  This makes the shortcomings of the Tic-tac-toe playing script quite obvious, as while it will never suggest a losing move, it does not suggest all possible non-losing moves.  Additionally, some suggested moves will seem to be weaker than others.  Still, the script is "perfect" in the sense that it will always play to a draw and it will never fail to punish human mistakes.  I think.
+    * This was an extremely easy feature to add.  It only required very slight modification of the existing `play()` function.  In other words, the suggested squares are the squares that may have been played if the AI was playing.
 
 Basically, I took a fairly logical and incremental approach to building out this code.  I moved as quickly as possible in getting to functional MVP, then added extra stuff later.
 
