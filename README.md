@@ -44,8 +44,26 @@ My basic approach to development (in chronological order):
 1. Added hint button
     * Game will suggest a play.  This makes the shortcomings of the Tic-tac-toe playing script quite obvious, as while it will never suggest a losing move, it does not suggest all possible non-losing moves.  Additionally, some suggested moves will seem to be weaker than others.  Still, the script is "perfect" in the sense that it will always play to a draw and it will never fail to punish human mistakes.  I think.
     * This was an extremely easy feature to add.  It only required very slight modification of the existing `play()` function.  In other words, the suggested squares are the squares that may have been played if the AI was playing.  Take a look at the console to peek under the hood!  This is outputted by the `play()` function, so you'll see this whenever the AI is playing or whenever you click the hint button.
+1. Major change:  Computer can now look ahead 1 turn in order to better punish human mistakes.  The machine got stronger in the sense that it can now detect and punish more mistakes that humans may make.  It should not be any more or less likely to lose (the chance of it losing should still be 0%); it's just better at winning.
+    * This was a more risky change, so I put most of its code behind a feature toggle.  However, outside that feature toggle, I had to touch some existing functions to accommodate this change, but those changes were relatively simple.
 
 Basically, I took a fairly logical and incremental approach to building out this code.  I moved as quickly as possible in getting to functional MVP, then added extra stuff later.
+
+Retrospective
+-------------
+
+I learned quite a bit while doing this:
+
+* It doesn't take very long to get to "legacy code" if you're not careful at the start.  I still have a long way to go in terms of pattern recognition (of good software development patterns and anti-patterns), so the later changes I made felt more difficult to make compared to the code that I wrote to get to a working product to begin with.
+    * While I acknowledge the value of planning (especially as a former Scrum Master on fairly long-term projects), creating this project also reinforces that you also need a certain baseline level of knowledge to make that planning useful.  I simply did not know what I was in for when I laid out the program a certain way.
+* It doesn't take long before it becomes hard to reason about the behavior of your program.
+    * Tic-tac-toe is a fairly simple game, as I mentioned before.  I believe there are only 9! possibilities (the number of possible moves each turn is strictly monotonic and decreasing).
+    * My first working version of the game would always start by playing the center.  This greatly pruned the tree of possible board positions.  Not only that, it eliminated the possibility of certain board positions ever occurring, so I never had to write code to deal with those positions.
+    * As I expanded the possible moves, I had to write additional logic to properly play those new board positions.  All these rules work by modifying the score the game assigns to potential plays.  Once I added the 3rd or 4th rule, it became very difficult to reason about why any given board position was assigned a particular score.
+    * As an aside, some of my previous work experience was on a software development team that did matchmaking for a major PC game.  I have a better appreciation for how difficult matchmaking was to reason about, given that it had so many rules and "voters" for constructing and pairing teams.  Not only that, it had to worry about the speed and quality of team construction/matching and scalability.
+* I should have used feature toggles from the start.
+    * Had I planned for feature toggles from the start, I would have laid out my program in a much more modular fashion.  This is because I would have always been working under the assumption that a given piece of behavior may or may not be available.
+    * Because I brought in the concept of feature toggles late and only for one feature, all the code written prior to that point assumes the availability and behavior of all other code.
 
 Other notes
 -----------
