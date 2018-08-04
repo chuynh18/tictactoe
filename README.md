@@ -36,8 +36,12 @@ My basic approach to development (in chronological order):
     * AI code slightly DRYer
     * Removed check draw function (it was never necessary.  oops.)
 1. Refactored win logic so that the game is aware of which cells led to the win, allowing me to blink the row, column, or diagonal that led to the win.  This logic works if even if the player managed to win by creating more than one line simultaneously (that is to say, if the winning player managed to construct a row and a column or two diagonals, both winning lines will blink).
+1. Further increased diversity of computer play by allowing the computer to play any cell during turn 1.
+    * This took a bit of thinking in terms of how to parse the state of the board in order to have the machine not fall into certain board traps.
+1. Added hint button
+    * Game will suggest a play.  This makes the shortcomings of the Tic-tac-toe playing script quite obvious, as while it will never suggest a losing move, it does not suggest all possible non-losing moves.
 
-Basically, I took a fairly logical and incremental approach to building out this code.
+Basically, I took a fairly logical and incremental approach to building out this code.  I moved as quickly as possible in getting to functional MVP, then added extra stuff later.
 
 Other notes
 -----------

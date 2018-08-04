@@ -77,9 +77,9 @@ const reset = function() {
     button2.textContent = "Human vs CPU";
     button2.setAttribute("onclick", "mode=2;showBoard();refreshDisplay();modifyEventHandlers('getCellCoords(event)')");
     button3.textContent = "CPU vs Human";
-    button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,500)");
+    button3.setAttribute("onclick", "mode=3;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(function(){play(true)},500)");
     button4.textContent = "Spectate CPU vs CPU";
-    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(play,900)");
+    button4.setAttribute("onclick", "mode=4;showBoard();modifyEventHandlers('');refreshDisplay();setTimeout(function(){play(true)},900)");
 
     buttonList.appendChild(button1);
     buttonList.appendChild(button2);
@@ -161,15 +161,43 @@ const refreshDisplay = function() {
         board.style.backgroundColor = "#36fc2f";
     } else if (!winner && mode) {
         // if I used const for turnId, html, and board, they wouldn't be defined here!
+
+        const buttonList = document.createElement("div");
+        buttonList.id = "start-buttons";
+
+        const hint = document.createElement("button");
+        hint.textContent = "Give me a hint!";
+        hint.setAttribute("onclick", "play(false)");
+
+        buttonList.appendChild(hint);
+
         if (turn === 1) {
             html.style.backgroundColor = "#778899";
             board.style.backgroundColor = "#2196F3";
             turnId.textContent = "Player 1's turn";
+            if (mode === 2) {
+                turnId.appendChild(buttonList);
+            }
+            if (mode === 3) {
+                hint.disabled = true;
+                turnId.appendChild(buttonList);
+            }
         }
         else {
             html.style.backgroundColor = "#aa8484";
             board.style.backgroundColor = "#f32121";
             turnId.textContent = "Player 2's turn";
+            if (mode === 2) {
+                hint.disabled = true;
+                turnId.appendChild(buttonList);
+            }
+            if (mode === 3) {
+                turnId.appendChild(buttonList);
+            }
+        }
+
+        if (mode === 1) {
+            turnId.appendChild(buttonList);
         }
     }
 
@@ -240,7 +268,7 @@ const updateCell = function(cell) {
             } else if (turn === 2) {
                 modifyEventHandlers("");
                 setTimeout(function() {
-                    play();
+                    play(true);
                 }, 1000);
             }
         } else if (mode === 3 && !winner) {
@@ -249,12 +277,12 @@ const updateCell = function(cell) {
             } else if (turn === 1) {
                 modifyEventHandlers("");
                 setTimeout(function() {
-                    play();
+                    play(true);
                 }, 1000);
             }
         } else if (mode === 4 && !winner) {
             setTimeout(function() {
-                play();
+                play(true);
             }, 900);
         }
     }
@@ -448,7 +476,7 @@ const cellsInDir = function(row, col, dir, remove) {
     return cells;
 }
 
-const play = function() {
+const play = function(actuallyPlay) {
     // score array holds all possible moves the AI can make
     const score = [
         {"score": 0, "valid": false, diagA: true, diagB: false},
@@ -586,10 +614,14 @@ const play = function() {
     }
 
     // increase diversity of AI moves by prioritizing the center later
+    if (turns === 1) {
+        score[4].score += 420;
+    }
+
+    // increase value of corners after the first turn
     if (turns > 0) {
         score[0].score += 2;
         score[2].score += 2;
-        score[4].score += 420;
         score[6].score += 2;
         score[8].score += 2;
     }
@@ -630,12 +662,38 @@ const play = function() {
     cellToPlay.row = Math.floor(maxIndex / 3);
     cellToPlay.column = maxIndex % 3;
 
-    console.log(turns);
-    console.log(cellToPlay);
+    console.log("Turn:", turns);
+    console.log(`Play: ${cellToPlay.row}, ${cellToPlay.column}`);
     console.log(score);
     console.log("");
 
-    updateCell(cellToPlay);
+    if (actuallyPlay) {
+        updateCell(cellToPlay);
+    } else {
+        var blink = function(cellId, turn) {
+            let colorClass;
+
+            if (turn === 1) {
+                colorClass = "xWin";
+            } else {
+                colorClass = "oWin";
+            }
+
+            for (let i = 0; i < 3; i++) {
+                setTimeout(function() {
+                    document.getElementById(String(cellId)).classList.add(colorClass);
+                    setTimeout(function() {
+                        document.getElementById(String(cellId)).classList.remove(colorClass)
+                    }, 250);
+                }, 500*i);
+            }
+        }
+
+        for (let i = 0; i < equivalentPlays.length; i++) {
+            blink(equivalentPlays[i], turn);
+        }
+    }
+    
 } // end of "AI" code
 
 // on page load, load from localStorage and render the rest of the page
