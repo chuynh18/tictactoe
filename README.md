@@ -54,8 +54,9 @@ Retrospective
 
 I learned quite a bit while doing this:
 
-* It doesn't take very long to get to "legacy code" if you're not careful at the start.  I still have a long way to go in terms of pattern recognition (of good software development patterns and anti-patterns), so the later changes I made felt more difficult to make compared to the code that I wrote to get to a working product to begin with.
+* It doesn't take very long to get to "legacy code" if you're not careful at the start.  In other words, it does not take very long to get to a state where it's difficult to work in a codebase.  I still have a long way to go in terms of pattern recognition (of good software development patterns and anti-patterns), so the later changes I made felt more difficult to make compared to the code that I wrote to get to a working product to begin with.
     * While I acknowledge the value of planning (especially as a former Scrum Master on fairly long-term projects), creating this project also reinforces that you also need a certain baseline level of knowledge to make that planning useful.  I simply did not know what I was in for when I laid out the program a certain way.
+    * This bullet point stands out to me, because this is still a relatively simple program written over the course of only a few days.  If I tried to write anything application scale with this methodology, it would become impossible to make forward progress in just a week or two.
 * It doesn't take long before it becomes hard to reason about the behavior of your program.
     * Tic-tac-toe is a fairly simple game, as I mentioned before.  I believe there are only 9! possibilities (the number of possible moves each turn is strictly monotonic and decreasing).
     * My first working version of the game would always start by playing the center.  This greatly pruned the tree of possible board positions.  Not only that, it eliminated the possibility of certain board positions ever occurring, so I never had to write code to deal with those positions.
