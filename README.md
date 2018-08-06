@@ -55,13 +55,21 @@ Feature toggles
 
 As mentioned above, I've added feature toggles to the code.  Images make the behaviorial differences more stark...
 
+`playNonDiagonals: false` - AI will only play center square or diagonal squares at start of game
+
+![playNonDiagonals: false](assets/img/diagFalse.png)
+
+`playNonDiagonals: true` - AI able to play any square at start of game
+
+![playNonDiagonals: true](assets/img/diagTrue.png)
+
 `lookAhead: false` - AI does not punish this board configuration
 
-![`lookAhead: false`](assets/img/lookAheadFalse.png)
+![lookAhead: false](assets/img/lookAheadFalse.png)
 
 `lookAhead: true` - AI correctly identifies a move that guarantees victory
 
-![`lookAhead: true`](assets/img/lookAheadTrue.png)
+![lookAhead: true](assets/img/lookAheadTrue.png)
 
 Retrospective
 -------------
