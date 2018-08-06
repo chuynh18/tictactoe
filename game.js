@@ -53,6 +53,7 @@ const reset = function() {
         [0,0,0]
     ];
     turn = 1;
+    inverseTurn = 2;
     turns = 0;
     winner = 0;
     mode = 0;
