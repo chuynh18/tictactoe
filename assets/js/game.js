@@ -502,15 +502,15 @@ const cellsInDir = function(row, col, dir, remove) {
 const play = function(actuallyPlay) {
     // score array holds all possible moves the AI can make
     const score = [
-        {"score": 1, "valid": false, diagA: true, diagB: false},
-        {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 1, "valid": false, diagA: false, diagB: true},
-        {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 1, "valid": false, diagA: true, diagB: true},
-        {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 1, "valid": false, diagA: false, diagB: true},
-        {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 1, "valid": false, diagA: true, diagB: false},
+        {"score": 1, "valid": false, voters: [], diagA: true, diagB: false},
+        {"score": 0, "valid": false, voters: [], diagA: false, diagB: false},
+        {"score": 1, "valid": false, voters: [], diagA: false, diagB: true},
+        {"score": 0, "valid": false, voters: [], diagA: false, diagB: false},
+        {"score": 1, "valid": false, voters: [], diagA: true, diagB: true},
+        {"score": 0, "valid": false, voters: [], diagA: false, diagB: false},
+        {"score": 1, "valid": false, voters: [], diagA: false, diagB: true},
+        {"score": 0, "valid": false, voters: [], diagA: false, diagB: false},
+        {"score": 1, "valid": false, voters: [], diagA: true, diagB: false},
     ];
     let maxScore = -Infinity;
     let maxIndex = 0;
@@ -524,6 +524,7 @@ const play = function(actuallyPlay) {
     if (featureToggle.playNonDiagonals) {
         for (let i = 0; i < score.length; i += 2) {
             score[i].score = 0;
+            score[i].voters[score[i].voters.length] = "playNonDiagonals";
         }
     }
 
@@ -538,84 +539,74 @@ const play = function(actuallyPlay) {
                 const col = cellsInDir(i, j, 1, true);
                 let diagA;
                 let diagB;
-                let gameBoardCopy;
                 
                 // this looks ahead by 1 turn (in other words, it plays every possible play and scores the board position)
                 if (featureToggle.lookAhead) {
-                    gameBoardCopy = [...gameBoard];
+
+                    // make a copy of the game board and try a play
+                    const gameBoardCopy = [[Array.from(gameBoard[0])],[Array.from(gameBoard[1])],[Array.from(gameBoard[2])]];
                     gameBoardCopy[i][j] = turn;
                     const diagAAhead = cellsInDir(1, 1, 2, false);
                     const diagBAhead = cellsInDir(1, 1, 3, false);
 
-                    if (score[index].diagA) {
-                        if (twoOutOfThree([diagAAhead[0], diagAAhead[1]], gameBoardCopy) === turn && diagAAhead[2] !== inverseTurn) {
-                            score[index].score += 2;
+                    // score the hypothetical play based on the position of the board after said play
+                    for (let k = 0; k <= 2; k++) {
+                        let array = [0, 1, 2];
+                        array.splice(k, 1);
+
+                        if (score[index].diagA) {
+                            if (twoOutOfThree([diagAAhead[array[0]], diagAAhead[array[1]]], gameBoardCopy) === turn && diagAAhead[k] !== inverseTurn) {
+                                score[index].score += 2;
+                                score[index].voters[score[index].voters.length] = "lookAheadDiagA";
+                            }
                         }
-                        if (twoOutOfThree([diagAAhead[0], diagAAhead[2]], gameBoardCopy) === turn && diagAAhead[1] !== inverseTurn) {
-                            score[index].score += 2;
+
+                        if (score[index].diagB) {
+                            if (twoOutOfThree([diagBAhead[array[0]], diagBAhead[array[1]]], gameBoardCopy) === turn && diagBAhead[k] !== inverseTurn) {
+                                score[index].score += 2;
+                                score[index].voters[score[index].voters.length] = "lookAheadDiagB";
+                            }
                         }
-                        if (twoOutOfThree([diagAAhead[1], diagAAhead[2]], gameBoardCopy) === turn && diagAAhead[0] !== inverseTurn) {
+
+                        const rowAhead = cellsInDir(i, j, 0, false);
+                        const colAhead = cellsInDir(i, j, 1, false);
+
+                        if (twoOutOfThree([rowAhead[array[0]], rowAhead[array[1]]], gameBoardCopy) === turn && rowAhead[k] !== inverseTurn) {
                             score[index].score += 2;
+                            score[index].voters[score[index].voters.length] = "lookAheadRow";
+                        }
+
+                        if (twoOutOfThree([colAhead[array[0]], colAhead[array[1]]], gameBoardCopy) === turn && colAhead[k] !== inverseTurn) {
+                            score[index].score += 2;
+                            score[index].voters[score[index].voters.length] = "lookAheadCol";
                         }
                     }
-                    
-                    if (score[index].diagB) {
-                        if (twoOutOfThree([diagBAhead[0], diagBAhead[1]], gameBoardCopy) === turn && diagBAhead[2] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                        if (twoOutOfThree([diagBAhead[0], diagBAhead[2]], gameBoardCopy) === turn && diagBAhead[1] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                        if (twoOutOfThree([diagBAhead[1], diagBAhead[2]], gameBoardCopy) === turn && diagBAhead[0] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                    }
-
-                    for (let k = 0; k < gameBoard.length; k++) {
-                        const rowAhead = cellsInDir(k, k, 0, false);
-                        const colAhead = cellsInDir(k, k, 1, false);
-
-                        if (twoOutOfThree([rowAhead[0], rowAhead[1]], gameBoardCopy) === turn && rowAhead[2] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                        if (twoOutOfThree([rowAhead[0], rowAhead[2]], gameBoardCopy) === turn && rowAhead[1] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                        if (twoOutOfThree([rowAhead[1], rowAhead[2]], gameBoardCopy) === turn && rowAhead[0] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                        if (twoOutOfThree([colAhead[0], colAhead[1]], gameBoardCopy) === turn && colAhead[2] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                        if (twoOutOfThree([colAhead[0], colAhead[2]], gameBoardCopy) === turn && colAhead[1] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                        if (twoOutOfThree([colAhead[1], colAhead[2]], gameBoardCopy) === turn && colAhead[0] !== inverseTurn) {
-                            score[index].score += 2;
-                        }
-                    }
-
-                    gameBoardCopy[i][j] = 0;
                 }
 
                 // bump cell score if playing that cell would block the row or match 3 in the row
                 if (twoOutOfThree(row) === -1) {
                     // don't make futile plays
                     score[index].score -= 1;
+                    score[index].voters[score[index].voters.length] = "deadRow";
                 } else if (twoOutOfThree(row) !== turn && twoOutOfThree(row) !== 0) {
                     // it's very important to block
                     score[index].score += 9;
+                    score[index].voters[score[index].voters.length] = "preventOpponentWin";
                 } else if (twoOutOfThree(row) === turn && twoOutOfThree(row) !== 0) {
                     // but it's more important to win
                     score[index].score += 10;
+                    score[index].voters[score[index].voters.length] = "winningPlay";
                 }
                 // same as above, but for column
                 if (twoOutOfThree(col) === -1) {
                     score[index].score -= 1;
+                    score[index].voters[score[index].voters.length] = "deadColumn";
                 } else if (twoOutOfThree(col) !== turn && twoOutOfThree(col) !== 0) {
                     score[index].score += 9;
+                    score[index].voters[score[index].voters.length] = "preventOpponentWin";
                 } else if (twoOutOfThree(col) === turn && twoOutOfThree(col) !== 0) {
                     score[index].score += 10;
+                    score[index].voters[score[index].voters.length] = "winningPlay";
                 }
                 // if diagonal is applicable for the cell, perform the same logic as above
                 if (score[index].diagA) {
@@ -625,13 +616,17 @@ const play = function(actuallyPlay) {
                         // this is not a mistake, as diagonals are different.  make the AI set up a trap.
                         if (gameBoard[1][1] === inverseTurn) {
                             score[index].score += 1;
+                            score[index].voters[score[index].voters.length] = "diagATrap";
                         } else {
                             score[index].score -= 1;
+                            score[index].voters[score[index].voters.length] = "deadDiagA";
                         }
                     } else if (twoOutOfThree(diagA) !== turn && twoOutOfThree(diagA) !== 0) {
                         score[index].score += 9;
+                        score[index].voters[score[index].voters.length] = "preventOpponentWin";
                     } else if (twoOutOfThree(diagA) === turn && twoOutOfThree(diagA) !== 0) {
                         score[index].score += 10;
+                        score[index].voters[score[index].voters.length] = "winningPlay";
                     }
                 }
                 if (score[index].diagB) {
@@ -640,13 +635,17 @@ const play = function(actuallyPlay) {
                     if (twoOutOfThree(diagB) === -1) {
                         if (gameBoard[1][1] === inverseTurn) {
                             score[index].score += 1;
+                            score[index].voters[score[index].voters.length] = "diagBTrap";
                         } else {
                             score[index].score -= 1;
+                            score[index].voters[score[index].voters.length] = "deadDiagB";
                         }
                     } else if (twoOutOfThree(diagB) !== turn && twoOutOfThree(diagB) !== 0) {
                         score[index].score += 9;
+                        score[index].voters[score[index].voters.length] = "preventOpponentWin";
                     } else if (twoOutOfThree(diagB) === turn && twoOutOfThree(diagB) !== 0) {
                         score[index].score += 10;
+                        score[index].voters[score[index].voters.length] = "winningPlay";
                     }
                 }
 
@@ -662,6 +661,7 @@ const play = function(actuallyPlay) {
                             const cellId = cellsArrayOfObj[i].row * gameBoard.length + cellsArrayOfObj[i].column;
                         
                             score[cellId].score -= 1;
+                            score[cellId].voters[score[cellId].voters.length] = "avoidBlankLine";
                         }
                     }
 
@@ -716,7 +716,8 @@ const play = function(actuallyPlay) {
 
     // increase diversity of AI moves by prioritizing the center later
     if (turns === 1) {
-        score[4].score += 420;
+        score[4].score += 419;
+        score[4].voters[score[4].voters.length] = "centerOpenTurn2";
     }
 
     // increase value of corners and center after the first turn
@@ -726,21 +727,34 @@ const play = function(actuallyPlay) {
         score[4].score += 1;
         score[6].score += 1;
         score[8].score += 1;
+        score[0].voters[score[0].voters.length] = "valueAddAfterFirstTurn";
+        score[2].voters[score[2].voters.length] = "valueAddAfterFirstTurn";
+        score[4].voters[score[4].voters.length] = "valueAddAfterFirstTurn";
+        score[6].voters[score[6].voters.length] = "valueAddAfterFirstTurn";
+        score[8].voters[score[8].voters.length] = "valueAddAfterFirstTurn";
     }
 
     // prevent edge case loss by increasing score of non-diagonal moves
     // this became necessary when I made the AI deprioritize playing the center cell
-    if (gameBoard[0][0] === gameBoard[2][2] && gameBoard[0][0]) {
+    if (gameBoard[0][0] === gameBoard[2][2] && gameBoard[0][0] === inverseTurn) {
         score[1].score += 3;
         score[3].score += 3;
         score[5].score += 3;
         score[7].score += 3;
+        score[1].voters[score[1].voters.length] = "avoidDiagonalTrap";
+        score[3].voters[score[3].voters.length] = "avoidDiagonalTrap";
+        score[5].voters[score[5].voters.length] = "avoidDiagonalTrap";
+        score[7].voters[score[7].voters.length] = "avoidDiagonalTrap";
     }
-    if (gameBoard[0][2] === gameBoard[2][0] && gameBoard[0][2]) {
+    if (gameBoard[0][2] === gameBoard[2][0] && gameBoard[0][2] === inverseTurn) {
         score[1].score += 3;
         score[3].score += 3;
         score[5].score += 3;
         score[7].score += 3;
+        score[1].voters[score[1].voters.length] = "avoidDiagonalTrap";
+        score[3].voters[score[3].voters.length] = "avoidDiagonalTrap";
+        score[5].voters[score[5].voters.length] = "avoidDiagonalTrap";
+        score[7].voters[score[7].voters.length] = "avoidDiagonalTrap";
     }
 
     // loop through the list of possible plays and find the best play
