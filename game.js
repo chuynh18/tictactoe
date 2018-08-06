@@ -616,7 +616,11 @@ const play = function(actuallyPlay) {
 
                     if (twoOutOfThree(diagA) === -1) {
                         // this is not a mistake, as diagonals are different.  make the AI set up a trap.
-                        score[index].score += 1;
+                        if (gameBoard[1][1] === inverseTurn) {
+                            score[index].score += 1;
+                        } else {
+                            score[index].score -= 1;
+                        }
                     } else if (twoOutOfThree(diagA) !== turn && twoOutOfThree(diagA) !== 0) {
                         score[index].score += 9;
                     } else if (twoOutOfThree(diagA) === turn && twoOutOfThree(diagA) !== 0) {
@@ -627,7 +631,11 @@ const play = function(actuallyPlay) {
                     diagB = cellsInDir(i, j, 3, true);
 
                     if (twoOutOfThree(diagB) === -1) {
-                        score[index].score += 1;
+                        if (gameBoard[1][1] === inverseTurn) {
+                            score[index].score += 1;
+                        } else {
+                            score[index].score -= 1;
+                        }
                     } else if (twoOutOfThree(diagB) !== turn && twoOutOfThree(diagB) !== 0) {
                         score[index].score += 9;
                     } else if (twoOutOfThree(diagB) === turn && twoOutOfThree(diagB) !== 0) {
