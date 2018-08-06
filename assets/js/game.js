@@ -113,11 +113,11 @@ const playSound = function(sound) {
 // flips turn and plays sound
 const changeTurn = function() {
     if (turn === 1) {
-        playSound("x.webm");
+        playSound("assets/snd/x.webm");
         turn++;
         inverseTurn--;
     } else {
-        playSound("o.webm");
+        playSound("assets/snd/o.webm");
         turn--;
         inverseTurn++;
     }
@@ -502,15 +502,15 @@ const cellsInDir = function(row, col, dir, remove) {
 const play = function(actuallyPlay) {
     // score array holds all possible moves the AI can make
     const score = [
-        {"score": 0, "valid": false, diagA: true, diagB: false},
+        {"score": 1, "valid": false, diagA: true, diagB: false},
         {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 0, "valid": false, diagA: false, diagB: true},
+        {"score": 1, "valid": false, diagA: false, diagB: true},
         {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 0, "valid": false, diagA: true, diagB: true},
+        {"score": 1, "valid": false, diagA: true, diagB: true},
         {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 0, "valid": false, diagA: false, diagB: true},
+        {"score": 1, "valid": false, diagA: false, diagB: true},
         {"score": 0, "valid": false, diagA: false, diagB: false},
-        {"score": 0, "valid": false, diagA: true, diagB: false},
+        {"score": 1, "valid": false, diagA: true, diagB: false},
     ];
     let maxScore = -Infinity;
     let maxIndex = 0;
@@ -520,6 +520,12 @@ const play = function(actuallyPlay) {
         "column": 0,
         "cellId": 0
     };
+
+    if (featureToggle.playNonDiagonals) {
+        for (let i = 0; i < score.length; i += 2) {
+            score[i].score = 0;
+        }
+    }
 
     // iterate over the game board
     for (let i = 0; i < gameBoard.length; i++) {
@@ -645,7 +651,7 @@ const play = function(actuallyPlay) {
                 }
 
                 // code specifically to make it so AI can play non-diagonal + non-center cell in turn 1 without losing
-                if (((i === 0 && j === 0) || (i === 2 && j === 2)) && turns === 3) {
+                if (featureToggle.playNonDiagonals && ((i === 0 && j === 0) || (i === 2 && j === 2)) && turns === 3) {
                     const emptyRowCandidateTop = cellsInDir(0, 0, 0, false);
                     const emptyRowCandidateBottom = cellsInDir(2, 2, 0, false);
                     const emptyColCandidateLeft = cellsInDir(0, 0, 1, false);
@@ -725,16 +731,16 @@ const play = function(actuallyPlay) {
     // prevent edge case loss by increasing score of non-diagonal moves
     // this became necessary when I made the AI deprioritize playing the center cell
     if (gameBoard[0][0] === gameBoard[2][2] && gameBoard[0][0]) {
-        score[1].score += 2;
-        score[3].score += 2;
-        score[5].score += 2;
-        score[7].score += 2;
+        score[1].score += 3;
+        score[3].score += 3;
+        score[5].score += 3;
+        score[7].score += 3;
     }
     if (gameBoard[0][2] === gameBoard[2][0] && gameBoard[0][2]) {
-        score[1].score += 2;
-        score[3].score += 2;
-        score[5].score += 2;
-        score[7].score += 2;
+        score[1].score += 3;
+        score[3].score += 3;
+        score[5].score += 3;
+        score[7].score += 3;
     }
 
     // loop through the list of possible plays and find the best play
